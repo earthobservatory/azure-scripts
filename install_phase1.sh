@@ -63,17 +63,15 @@ az storage account create --name $AZ_STORAGE_NAME --resource-group $AZ_RESOURCE_
 export AZ_STORAGE_KEYS_JSON=$(az storage account keys list --resource-group $AZ_RESOURCE_GROUP --account-name $AZ_STORAGE_NAME)
 # FIXME: THERE IS AN ERRATA IN THE CONTRACTOR'S DOCUMENT IN THE COMMAND ABOVE!!!
 if [ $PYTHON_VERSION = "3" ]; then
-  export AZ_STORAGE_KEY_ONE=`echo $AZ_STORAGE_KEYS_JSON | python -c "import sys, json; print(json.load(sys.stdin)[0]['value'])"`
-  export AZ_STORAGE_KEY_TWO=`echo $AZ_STORAGE_KEYS_JSON | python -c "import sys, json; print(json.load(sys.stdin)[1]['value'])"`
+  export AZ_STORAGE_KEY=`echo $AZ_STORAGE_KEYS_JSON | python -c "import sys, json; print(json.load(sys.stdin)[0]['value'])"`
 else
-  export AZ_STORAGE_KEY_ONE=`echo $AZ_STORAGE_KEYS_JSON | python -c "import sys, json; print json.load(sys.stdin)[0]['value']"`
-  export AZ_STORAGE_KEY_TWO=`echo $AZ_STORAGE_KEYS_JSON | python -c "import sys, json; print json.load(sys.stdin)[1]['value']"`
+  export AZ_STORAGE_KEY=`echo $AZ_STORAGE_KEYS_JSON | python -c "import sys, json; print json.load(sys.stdin)[0]['value']"`
 fi
 
 echo "➡️  Creating storage containers..."
 
-az storage container create --name code --account-name $AZ_STORAGE_NAME --account-key $AZ_STORAGE_KEY_ONE --public-access container
-az storage container create --name dataset --account-name $AZ_STORAGE_NAME --account-key $AZ_STORAGE_KEY_TWO --public-access container
+az storage container create --name code --account-name $AZ_STORAGE_NAME --account-key $AZ_STORAGE_KEY --public-access container
+az storage container create --name dataset --account-name $AZ_STORAGE_NAME --account-key $AZ_STORAGE_KEY --public-access container
 
 echo
 echo "✅  Tool Completed. Exiting..."
