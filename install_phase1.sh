@@ -55,7 +55,7 @@ az network nic create --resource-group $AZ_RESOURCE_GROUP --name CINIC_ZY  --vne
 
 # Create application insights
 echo "➡️  Creating application insights..."
-az resource create --resource-group $AZ_RESOURCE_GROUP --resource-type "Microsoft.Insights/components" --name HySDS_ZY_Insights --location southeastasia --properties '{"ApplicationId":"hysds_zy","Application_Type":"other", "Flow_Type":"Bluefield", "Request_Source":"rest"}'
+az resource create --resource-group $AZ_RESOURCE_GROUP --resource-type "Microsoft.Insights/components" --name $AZ_INSIGHTS_NAME --location southeastasia --properties '{"ApplicationId":"hysds_zy","Application_Type":"other", "Flow_Type":"Bluefield", "Request_Source":"rest"}'
 
 # Create a storage account
 echo "➡️  Creating a storage account..."

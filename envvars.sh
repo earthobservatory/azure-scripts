@@ -28,6 +28,9 @@ export AZ_GRQ_NIC="GRQNIC_ZY"
 export AZ_FACTOTUM_NIC="FactotumNIC_ZY"
 export AZ_CI_NIC="CINIC_ZY"
 
+# Name of the insights
+export AZ_INSIGHTS_NAME="HySDS_ZY_Insights"
+
 # Names of the disks used on the VMs. You might want to change them
 export AZ_MOZART_DISK="MozartDisk_ZY"
 export AZ_METRICS_DISK="MetricsDisk_ZY"
