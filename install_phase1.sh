@@ -70,13 +70,10 @@ else
   export AZ_STORAGE_KEY_TWO=`echo $AZ_STORAGE_KEYS_JSON | python -c "import sys, json; print json.load(sys.stdin)[1]['value']"`
 fi
 
-echo
-echo "⌨️  Please execute the following commands manually, replacing [STORAGE_ACCOUNT_KEY] with one of the account keys above: "
-echo "$ az storage container create --name code --account-name $AZ_STORAGE_NAME --account-key [STORAGE_ACCOUNT_KEY] --public-access container"
-echo "$ az storage container create --name dataset --account-name $AZ_STORAGE_NAME --account-key [STORAGE_ACCOUNT_KEY] --public-access container"
+echo "➡️  Creating storage containers..."
 
-echo " Creating storage containers..."
-
+az storage container create --name code --account-name $AZ_STORAGE_NAME --account-key $AZ_STORAGE_KEY_ONE --public-access container
+az storage container create --name dataset --account-name $AZ_STORAGE_NAME --account-key $AZ_STORAGE_KEY_TWO --public-access container
 
 echo
 echo "✅  Tool Completed. Exiting..."
