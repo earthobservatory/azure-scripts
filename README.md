@@ -46,6 +46,17 @@ In addition to spawning a virtual terminal, all `stdout` output is also logged t
 
 `sh install_phase4.sh`
 
+### Dump Parameters - Automatic configuration dumping tool
+
+The `dump_parameters.sh` script automatically dumps configuration parameters for the user to view. Typical parameters dumped are:
+
+- VM IP Addresses
+- Storage account name
+- Keys for accessing Instrumentation and Storage
+- Endpoints
+
+Some of the parameters emitted are based on the parameters set by `envvars.sh`, and may not be correct if `envvars.sh` is incorrect.
+
 ## Good to knows
 
 - Make sure that Azure is properly configured with `Microsoft.Network`, `Microsoft.Compute` and `Microsoft.Storage` resource providers all enabled
