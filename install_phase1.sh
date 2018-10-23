@@ -34,8 +34,10 @@ az network vnet create --resource-group $AZ_RESOURCE_GROUP --name $AZ_VNET_NAME 
 echo "➡️  Creating network security group..."
 az network nsg create --resource-group $AZ_RESOURCE_GROUP --name $AZ_NSG_NAME
 
-# Configure network security groups for SSH inbound. You might want to alter this rule once all the servers are configured
+# Configure network security groups for SSH, HTTP and HTTPS inbound. You might want to alter this rule once all the servers are configured
 az network nsg rule create --resource-group $AZ_RESOURCE_GROUP --nsg-name $AZ_NSG_NAME --name default-allow-ssh --access Allow --protocol Tcp --direction Inbound --priority 1000 --source-address-prefix Internet --source-port-range "*" --destination-port-range 22
+az network nsg rule create --resource-group $AZ_RESOURCE_GROUP --nsg-name $AZ_NSG_NAME --name default-allow-http --access Allow --protocol Tcp --direction Inbound --priority 1500 --source-address-prefix Internet --source-port-range "*" --destination-port-range 80
+az network nsg rule create --resource-group $AZ_RESOURCE_GROUP --nsg-name $AZ_NSG_NAME --name default-allow-https --access Allow --protocol Tcp --direction Inbound --priority 2000 --source-address-prefix Internet --source-port-range "*" --destination-port-range 443
 
 # Create public IPs
 echo "➡️  Creating public IPs..."
