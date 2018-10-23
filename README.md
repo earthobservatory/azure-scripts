@@ -57,7 +57,9 @@ The `dump_parameters.sh` script automatically dumps configuration parameters for
 
 Some of the parameters emitted are based on the parameters set by `envvars.sh`, and may not be correct if `envvars.sh` is incorrect.
 
-## Good to knows
+`sh dump_parameters.sh`
+
+## Good to knows/Caveats
 
 - Make sure that Azure is properly configured with `Microsoft.Network`, `Microsoft.Compute` and `Microsoft.Storage` resource providers all enabled
 - Triple check the environment variables defined in the `envvars.sh` file before deploying, such as the name of the resource group, the names of the resources to be created etc.
