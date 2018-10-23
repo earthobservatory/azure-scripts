@@ -72,8 +72,24 @@ echo "✏️  Storage protocol:"
 echo "STORAGE_PROTOCOL: azure"
 echo
 
+echo "✏️  Tenant ID/AZURE_TENANT_ID: "
+if [ $PYTHON_VERSION = "3" ]; then
+  az account show | python -c "import sys, json; print(json.load(sys.stdin)['tenantId'])"
+else
+  az account show | python -c "import sys, json; print json.load(sys.stdin)['tenantId']"
+fi
+echo
+
+echo "✏️  Subscription ID/AZURE_SUBSCRIPTION_ID: "
+if [ $PYTHON_VERSION = "3" ]; then
+  az account show | python -c "import sys, json; print(json.load(sys.stdin)['id'])"
+else
+  az account show | python -c "import sys, json; print json.load(sys.stdin)['id']"
+fi
+echo
+
 echo "✏️  As for the following parameters, please run the command below ONLY ONCE:"
-echo "AZURE_CLIENT_ID, AZURE_CLIENT_SECRET_KEY , AZURE_SUBSCRIPTION_ID and AZURE_TENANT_ID"
+echo "AZURE_CLIENT_ID, AZURE_CLIENT_SECRET_KEY"
 echo "$ az ad sp create-for-rbac --sdk-auth"
 echo
 
