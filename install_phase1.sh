@@ -34,10 +34,15 @@ az network vnet create --resource-group $AZ_RESOURCE_GROUP --name $AZ_VNET_NAME 
 echo "➡️  Creating network security group..."
 az network nsg create --resource-group $AZ_RESOURCE_GROUP --name $AZ_NSG_NAME
 
-# Configure network security groups for SSH, HTTP and HTTPS inbound. You might want to alter this rule once all the servers are configured
-az network nsg rule create --resource-group $AZ_RESOURCE_GROUP --nsg-name $AZ_NSG_NAME --name default-allow-ssh --access Allow --protocol Tcp --direction Inbound --priority 1000 --source-address-prefix Internet --source-port-range "*" --destination-port-range 22
-az network nsg rule create --resource-group $AZ_RESOURCE_GROUP --nsg-name $AZ_NSG_NAME --name default-allow-http --access Allow --protocol Tcp --direction Inbound --priority 1500 --source-address-prefix Internet --source-port-range "*" --destination-port-range 80
-az network nsg rule create --resource-group $AZ_RESOURCE_GROUP --nsg-name $AZ_NSG_NAME --name default-allow-https --access Allow --protocol Tcp --direction Inbound --priority 2000 --source-address-prefix Internet --source-port-range "*" --destination-port-range 443
+# Configure network security groups for SSH, HTTP and HTTPS inbound. You might want to tighten the security once all the servers are configured
+az network nsg rule create --resource-group $AZ_RESOURCE_GROUP --nsg-name $AZ_NSG_NAME --name SSHAccess --access Allow --protocol Tcp --direction Inbound --priority 1000 --source-address-prefix Internet --source-port-range "*" --destination-port-range 22
+az network nsg rule create --resource-group $AZ_RESOURCE_GROUP --nsg-name $AZ_NSG_NAME --name HTTPAccess --access Allow --protocol Tcp --direction Inbound --priority 1100 --source-address-prefix Internet --source-port-range "*" --destination-port-range 80
+az network nsg rule create --resource-group $AZ_RESOURCE_GROUP --nsg-name $AZ_NSG_NAME --name HTTPSAccess --access Allow --protocol Tcp --direction Inbound --priority 1200 --source-address-prefix Internet --source-port-range "*" --destination-port-range 443
+az network nsg rule create --resource-group $AZ_RESOURCE_GROUP --nsg-name $AZ_NSG_NAME --name HTTPAltAccess --access Allow --protocol Tcp --direction Inbound --priority 1300 --source-address-prefix Internet --source-port-range "*" --destination-port-range 8080
+az network nsg rule create --resource-group $AZ_RESOURCE_GROUP --nsg-name $AZ_NSG_NAME --name QueueAccess --access Allow --protocol Tcp --direction Inbound --priority 1400 --source-address-prefix Internet --source-port-range "*" --destination-port-range 15672
+az network nsg rule create --resource-group $AZ_RESOURCE_GROUP --nsg-name $AZ_NSG_NAME --name CeleryAccess --access Allow --protocol Tcp --direction Inbound --priority 1500 --source-address-prefix Internet --source-port-range "*" --destination-port-range 5555
+az network nsg rule create --resource-group $AZ_RESOURCE_GROUP --nsg-name $AZ_NSG_NAME --name ElastiSearchAccess --access Allow --protocol Tcp --direction Inbound --priority 1600 --source-address-prefix Internet --source-port-range "*" --destination-port-range 9200
+
 
 # Create public IPs
 echo "➡️  Creating public IPs..."
