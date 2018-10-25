@@ -80,6 +80,14 @@ This is caused by a faulty version of the `az` tool (namely 2.0.47) installed by
 
 `brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/3894a0d2095f48136ce1af5ebd5ba42dd38f1dac/Formula/azure-cli.rb`
 
+## Other known issues
+
+### `yum -y update` hangs
+
+This issue has not been conclusively investigated, but the symptoms of this issue boils down to an issue that occurs during phase 2, during the provisioning of the base VM, in which the `yum -y update` command causes the system to seem unresponsive, as well as causing the system to not respond to any incoming connections, and all SSH attempts will return `ssh_exchange_identification: read: Connection reset by peer`.
+
+It may be possible that the installation is simply taking a long time.
+
 ## Feedback
 
 If you encounter any issues with the script, please do not hesitate to open an issue on this repo.

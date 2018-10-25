@@ -41,7 +41,7 @@ az network nsg rule create --resource-group $AZ_RESOURCE_GROUP --nsg-name $AZ_NS
 az network nsg rule create --resource-group $AZ_RESOURCE_GROUP --nsg-name $AZ_NSG_NAME --name HTTPAltAccess --access Allow --protocol Tcp --direction Inbound --priority 1300 --source-address-prefix Internet --source-port-range "*" --destination-port-range 8080
 az network nsg rule create --resource-group $AZ_RESOURCE_GROUP --nsg-name $AZ_NSG_NAME --name QueueAccess --access Allow --protocol Tcp --direction Inbound --priority 1400 --source-address-prefix Internet --source-port-range "*" --destination-port-range 15672
 az network nsg rule create --resource-group $AZ_RESOURCE_GROUP --nsg-name $AZ_NSG_NAME --name CeleryAccess --access Allow --protocol Tcp --direction Inbound --priority 1500 --source-address-prefix Internet --source-port-range "*" --destination-port-range 5555
-az network nsg rule create --resource-group $AZ_RESOURCE_GROUP --nsg-name $AZ_NSG_NAME --name ElastiSearchAccess --access Allow --protocol Tcp --direction Inbound --priority 1600 --source-address-prefix Internet --source-port-range "*" --destination-port-range 9200
+az network nsg rule create --resource-group $AZ_RESOURCE_GROUP --nsg-name $AZ_NSG_NAME --name ElasticSearchAccess --access Allow --protocol Tcp --direction Inbound --priority 1600 --source-address-prefix Internet --source-port-range "*" --destination-port-range 9200
 
 
 # Create public IPs

@@ -40,8 +40,7 @@ yum -y update
 yum -y install puppet puppet-firewalld nscd ntp wget curl subversion git vim screen cloud-utils-growpart
 yum clean all
 rm -rf /var/lib/cloud/*
-waagent -deprovision
-y
+waagent -deprovision -force
 EOSSH
 
 echo "➡️  FYI: You may now SSH into the machine using the command ssh -i \"$PRIVATE_KEY_PATH\" ops@$BASE_IP"
