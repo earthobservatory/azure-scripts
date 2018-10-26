@@ -79,9 +79,9 @@ elif [ "$DEPLOY_MODE" = "d" ]; then
   python -c "import sys, json; print(json.load(sys.stdin)['publicIpAddress'])"` # Retrieves public IP address
   export GRQ_IP=`az vm create --resource-group $AZ_RESOURCE_GROUP --name $AZ_GRQ_NAME --nics $AZ_GRQ_NIC --os-disk-name $AZ_GRQ_DISK --os-disk-size-gb 128 --size Standard_E4_v3 --image $BASE_IMAGE_ID --admin-username ops --ssh-key-value "$PUBLIC_KEY" | \
   python -c "import sys, json; print(json.load(sys.stdin)['publicIpAddress'])"` # Retrieves public IP address
-  export FACTOTUM_IP=`az vm create --resource-group $AZ_RESOURCE_GROUP --name $AZ_FACTOTUM_NAME --nics $AZ_FACTOTUM_NIC --os-disk-name $AZ_FACTOTUM_DISK --os-disk-size-gb 128 --size Standard_B4ms --image $BASE_IMAGE_ID --admin-username ops --ssh-key-value "$PUBLIC_KEY" | \
+  export FACTOTUM_IP=`az vm create --resource-group $AZ_RESOURCE_GROUP --name $AZ_FACTOTUM_NAME --nics $AZ_FACTOTUM_NIC --os-disk-name $AZ_FACTOTUM_DISK --os-disk-size-gb 128 --size Standard_D4_v3 --image $BASE_IMAGE_ID --admin-username ops --ssh-key-value "$PUBLIC_KEY" | \
   python -c "import sys, json; print(json.load(sys.stdin)['publicIpAddress'])"` # Retrieves public IP address
-  export CI_IP=`az vm create --resource-group $AZ_RESOURCE_GROUP --name $AZ_CI_NAME --nics $AZ_CI_NIC --os-disk-name $AZ_CI_DISK --os-disk-size-gb 128 --size Standard_B4ms --image $BASE_IMAGE_ID --admin-username ops --ssh-key-value "$PUBLIC_KEY" | \
+  export CI_IP=`az vm create --resource-group $AZ_RESOURCE_GROUP --name $AZ_CI_NAME --nics $AZ_CI_NIC --os-disk-name $AZ_CI_DISK --os-disk-size-gb 128 --size Standard_D4_v3 --image $BASE_IMAGE_ID --admin-username ops --ssh-key-value "$PUBLIC_KEY" | \
   python -c "import sys, json; print(json.load(sys.stdin)['publicIpAddress'])"` # Retrieves public IP address
 else
   echo "Invalid input, aborting tool."

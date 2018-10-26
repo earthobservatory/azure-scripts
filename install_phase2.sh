@@ -36,15 +36,19 @@ ssh -o StrictHostKeyChecking=no -i "$PRIVATE_KEY_PATH" -T ops@$BASE_IP <<'EOSSH'
 sudo su -
 sed -i 's/enforcing/disabled/g' /etc/selinux/config
 yum install -y epel-release
-yum -y update
-yum -y install puppet puppet-firewalld nscd ntp wget curl subversion git vim screen cloud-utils-growpart
-yum clean all
-rm -rf /var/lib/cloud/*
-waagent -deprovision -force
+screen -d -m bash -c "yum -y update; yum -y install puppet puppet-firewalld nscd ntp wget curl subversion git vim screen cloud-utils-growpart; yum clean all"
 EOSSH
 
 echo "➡️  FYI: You may now SSH into the machine using the command ssh -i \"$PRIVATE_KEY_PATH\" ops@$BASE_IP"
 read -n 1 -s -r -p "⌨️  Check if the configuration procedures were successful. If successful, press any key to continue, else, SSH into the machine and reconfigure it manually..."
+
+echo
+echo "➡️  Preparing base virtual machine for imaging..."
+ssh -o StrictHostKeyChecking=no -i "$PRIVATE_KEY_PATH" -T ops@$BASE_IP <<'EOSSH'
+sudo su -
+rm -rf /var/lib/cloud/*
+waagent -deprovision -force
+EOSSH
 
 echo
 echo "➡️  Creating an image of base VM and deleting the VM..."
