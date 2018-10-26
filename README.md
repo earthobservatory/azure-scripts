@@ -1,14 +1,32 @@
 # HySDS/Azure automatic deployment scripts
 
-This repository contains a set of scripts meant to automatically deploy a HySDS cluster to Microsoft Azure.
+This repository contains two sets of scripts meant to automatically deploy a HySDS cluster to Microsoft Azure, one employing Terraform, a cloud architecture automatic deployment tool, and one employing traditional shell scripts.
 
-These automated deploy scripts are written in standard `sh` shell and provides a semi-automated way of deploying a HySDS cluster. The rationale for making shell scripts instead of a more powerful tool in an interpreted language like Python is twofold: to reduce code needed and to improve cross-platform compatibility. Occasionally however, Python helpers are written for more advanced functionality such as JSON parsing.
+The Terraform version provides a "versionable" way to write Infrastructure as Code (IAC), and provides a quick way to deploy, and to alter the architecture without having to delete the entire resource group (only applies under certain scenarios).
+
+The shell script version are written in standard `sh` shell and provides a semi-automated way of deploying a HySDS cluster. The rationale for making shell scripts instead of a more powerful tool in an interpreted language like Python is twofold: to reduce code needed and to improve cross-platform compatibility. Occasionally however, Python helpers are written for more advanced functionality such as JSON parsing.
 
 However, these scripts are not perfect and there may be issues encountered during deployment due to issues like bad connectivity and so on. These scripts do not perform any input sanitisation, so care must be taken during data entry.
 
-## Usage
+## Terraform Version Usage
 
-### Configure `envvars.sh`
+**WARNING: The Terraform version is still in development!**
+
+Download and install Terraform on your machine (preferably a UNIX-like system such as a Mac or a Linux machine) with [this link](https://www.terraform.io/downloads.html).
+
+Edit the `var_values.tfvars` file to suit your configuration.
+
+Run `terraform init` in order for Terraform to download the appropriate tools for working with Azure.
+
+Run `terraform apply -var-file=var_values.tfvars`, verify that the parameters are correct and type `yes` to apply the changes.
+
+### Deficiencies of Terraform
+
+Terraform in essence is a cloud architecture orchestration tool; a declarative language, rather than procedural (contrasting with the shell version). This means that it only concerns itself with assets and dependencies, not the state of the asset themselves. Terraform can only spin up VMs, and cannot alter their power states and so on. In the `.tf` files, you may notice `null_resource`s being created. Null resources are resources not tied to an actual cloud resource, but rather to add a bit of procedural logic in an otherwise declarative environment. For example, the deallocation and generalization of the Base VM is done through an external shell script, through a `null_resource`, not through Terraform's own system because Terraform does not handle these tasks.
+
+## Shell Version Usage
+
+### Phase 0 - Configure `envvars.sh`
 
 `envvars.sh` contains the desired names for your resources. Please edit the values in the script before attempting to run any of the other scripts. `envvars.sh` is not meant to be run on its own.
 
@@ -16,7 +34,7 @@ This set of scripts make a few assumptions:
 
 - ...that you have already configured a resource group. You have to edit the `AZ_RESOURCE_GROUP` variable in `envvars.sh` to match that of your actual resource group's name
 - ...that you already have the Azure CLI tool installed
-- ...that you have sufficient permissions to deploy assets like networking and virtual machines
+- ...that you have sufficient permissions to deploy assets like networking and virtual machines. It is highly recommended to have Owner permissions
 
 ### Phase 1 - Network assets provisioning
 
@@ -26,13 +44,13 @@ Phase 1 provisions networking assets, such as a virtual network, network securit
 
 ### Phase 2 - Base image creation
 
-Phase 2 creates a base image that the actual VMs are going to be based on. You will need to generate an SSH keypair beforehand so that you can authenticate to the base VM in order to configure it.
+Phase 2 creates a base image that the actual VMs are going to be based on. You will need to generate an SSH keypair beforehand so that the tool can authenticate to the base VM in order to configure it.
 
 `sh install_phase2.sh`
 
 ### Phase 3 - HySDS VMs deployment
 
-Phase 3 deploys actual VMs used by the HySDS framework, namely, Mozart, Metrics, GRQ, Factotum, and CI. The tool will print the IP addresses of the VMs upon successful deployment.
+Phase 3 spins up actual VMs used by the HySDS framework, namely, Mozart, Metrics, GRQ, Factotum, and CI. The tool will print the IP addresses of the VMs upon successful deployment.
 
 `sh install_phase3.sh`
 
@@ -48,7 +66,7 @@ In addition to spawning a virtual terminal, all `stdout` output is also logged t
 
 ### Dump Parameters - Automatic configuration dumping tool
 
-The `dump_parameters.sh` script automatically dumps configuration parameters for the user to view. Typical parameters dumped are:
+The `dump_parameters.sh` script automatically dumps configuration parameters for the user to view, which also makes the subsequent `sds configure` part easier. Typical parameters dumped are:
 
 - VM IP Addresses
 - Storage account name
@@ -86,7 +104,7 @@ This is caused by a faulty version of the `az` tool (namely 2.0.47) installed by
 
 This issue has not been conclusively investigated, but the symptoms of this issue boils down to an issue that occurs during phase 2, during the provisioning of the base VM, in which the `yum -y update` command causes the system to seem unresponsive, as well as causing the system to not respond to any incoming connections, and all SSH attempts will return `ssh_exchange_identification: read: Connection reset by peer`.
 
-It may be possible that the installation is simply taking a long time.
+It may be possible that the installation is simply taking a long time. However, during certain installation processes, it is found that `yum` has already terminated, but script is still waiting. A temporary workaround has been implemented in the form of skipping the update and simply installing the required packages and their dependencies.
 
 ## Feedback
 
