@@ -8,6 +8,10 @@ resource "azurerm_resource_group" "hysds" {
   location = "${var.location}"
 }
 
+output "Resource Group / AZURE_RESOURCE_GROUP" {
+  value = "${var.resource_group}"
+}
+
 ###############################################################################
 # Virtual Network
 ###############################################################################
