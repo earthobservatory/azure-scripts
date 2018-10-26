@@ -2,15 +2,13 @@
 
 This repository contains two sets of scripts meant to automatically deploy a HySDS cluster to Microsoft Azure, one employing Terraform, a cloud architecture automatic deployment tool, and one employing traditional shell scripts.
 
-The Terraform version provides a "versionable" way to write Infrastructure as Code (IAC), and provides a quick way to deploy, and to alter the architecture without having to delete the entire resource group (only applies under certain scenarios).
+The Terraform version provides a "versionable" way to write Infrastructure as Code (IAC), and provides a quick way to deploy, and to alter the architecture without having to delete the entire resource group (only applies under certain scenarios). The Terraform version is written in a hybrid manner: while most of the infrastructure is described using Terraform's `.tf` files, there are a few scripts that 
 
 The shell script version are written in standard `sh` shell and provides a semi-automated way of deploying a HySDS cluster. The rationale for making shell scripts instead of a more powerful tool in an interpreted language like Python is twofold: to reduce code needed and to improve cross-platform compatibility. Occasionally however, Python helpers are written for more advanced functionality such as JSON parsing.
 
 However, these scripts are not perfect and there may be issues encountered during deployment due to issues like bad connectivity and so on. These scripts do not perform any input sanitisation, so care must be taken during data entry.
 
 ## Terraform Version Usage
-
-**WARNING: The Terraform version is still in development!**
 
 Download and install Terraform on your machine (preferably a UNIX-like system such as a Mac or a Linux machine) with [this link](https://www.terraform.io/downloads.html).
 
@@ -19,6 +17,8 @@ Edit the `var_values.tfvars` file to suit your configuration.
 Run `terraform init` in order for Terraform to download the appropriate tools for working with Azure.
 
 Run `terraform apply -var-file=var_values.tfvars`, verify that the parameters are correct and type `yes` to apply the changes.
+
+Once everything is done, run `az ad sp create-for-rbac --sdk-auth` in your command line to create an application and retrieve the parameters necessary for `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET_KEY`, `AZURE_TENANT_ID` and `AZURE_SUBSCRIPTION_ID` when you're configuring the HySDS cluster through `sds configure`.
 
 ### Deficiencies of Terraform
 
