@@ -25,12 +25,12 @@ echo
 echo "This tool assumes you have already created the resource group $AZ_RESOURCE_GROUP!"
 read -n 1 -s -r -p "⌨  Press any key to continue or press Ctrl-C to abort..."
 
-# Create a virtual net, HySDS_VNet_ZY and a subnet, HySDS_Subnet_ZY
+# Create a virtual net and a subnet
 echo
 echo "➡️  Creating virtual net and subnet..."
 az network vnet create --resource-group $AZ_RESOURCE_GROUP --name $AZ_VNET_NAME --address-prefix 10.1.0.0/16 --subnet-name $AZ_SUBNET_NAME --subnet-prefix 10.1.1.0/24
 
-# Create a network security group, HySDS_NSG_ZY
+# Create a network security group
 echo "➡️  Creating network security group..."
 az network nsg create --resource-group $AZ_RESOURCE_GROUP --name $AZ_NSG_NAME
 
@@ -46,23 +46,23 @@ az network nsg rule create --resource-group $AZ_RESOURCE_GROUP --nsg-name $AZ_NS
 
 # Create public IPs
 echo "➡️  Creating public IPs..."
-az network public-ip create --name MozartPubIP_ZY --resource-group $AZ_RESOURCE_GROUP
-az network public-ip create --name MetricsPubIP_ZY --resource-group $AZ_RESOURCE_GROUP
-az network public-ip create --name GRQPubIP_ZY --resource-group $AZ_RESOURCE_GROUP
-az network public-ip create --name FactotumPubIP_ZY --resource-group $AZ_RESOURCE_GROUP
-az network public-ip create --name CIPubIP_ZY --resource-group $AZ_RESOURCE_GROUP
+az network public-ip create --name $AZ_MOZART_PUBIP --resource-group $AZ_RESOURCE_GROUP
+az network public-ip create --name $AZ_METRICS_PUBIP --resource-group $AZ_RESOURCE_GROUP
+az network public-ip create --name $AZ_GRQ_PUBIP --resource-group $AZ_RESOURCE_GROUP
+az network public-ip create --name $AZ_FACTOTUM_PUBIP --resource-group $AZ_RESOURCE_GROUP
+az network public-ip create --name $AZ_CI_PUBIP --resource-group $AZ_RESOURCE_GROUP
 
 # Create network interfaces (NICs)
 echo "➡️  Creating network interfaces..."
-az network nic create --resource-group $AZ_RESOURCE_GROUP --name MozartNIC_ZY --vnet-name $AZ_VNET_NAME --subnet $AZ_SUBNET_NAME --accelerated-networking true --public-ip-address MozartPubIP_ZY --network-security-group $AZ_NSG_NAME
-az network nic create --resource-group $AZ_RESOURCE_GROUP --name MetricsNIC_ZY --vnet-name $AZ_VNET_NAME  --subnet $AZ_SUBNET_NAME  --accelerated-networking true --public-ip-address MetricsPubIP_ZY  --network-security-group $AZ_NSG_NAME
-az network nic create --resource-group $AZ_RESOURCE_GROUP --name GRQNIC_ZY  --vnet-name $AZ_VNET_NAME  --subnet $AZ_SUBNET_NAME  --accelerated-networking true --public-ip-address GRQPubIP_ZY --network-security-group $AZ_NSG_NAME
-az network nic create --resource-group $AZ_RESOURCE_GROUP --name FactotumNIC_ZY  --vnet-name $AZ_VNET_NAME  --subnet $AZ_SUBNET_NAME  --accelerated-networking true --public-ip-address FactotumPubIP_ZY  --network-security-group $AZ_NSG_NAME
-az network nic create --resource-group $AZ_RESOURCE_GROUP --name CINIC_ZY  --vnet-name $AZ_VNET_NAME  --subnet $AZ_SUBNET_NAME  --accelerated-networking true --public-ip-address CIPubIP_ZY  --network-security-group $AZ_NSG_NAME
+az network nic create --resource-group $AZ_RESOURCE_GROUP --name $AZ_MOZART_NIC --vnet-name $AZ_VNET_NAME --subnet $AZ_SUBNET_NAME --accelerated-networking true --public-ip-address $AZ_MOZART_PUBIP --network-security-group $AZ_NSG_NAME
+az network nic create --resource-group $AZ_RESOURCE_GROUP --name $AZ_METRICS_NIC --vnet-name $AZ_VNET_NAME  --subnet $AZ_SUBNET_NAME  --accelerated-networking true --public-ip-address $AZ_METRICS_PUBIP  --network-security-group $AZ_NSG_NAME
+az network nic create --resource-group $AZ_RESOURCE_GROUP --name $AZ_GRQ_NIC  --vnet-name $AZ_VNET_NAME  --subnet $AZ_SUBNET_NAME  --accelerated-networking true --public-ip-address $AZ_GRQ_PUBIP --network-security-group $AZ_NSG_NAME
+az network nic create --resource-group $AZ_RESOURCE_GROUP --name $AZ_FACTOTUM_NIC  --vnet-name $AZ_VNET_NAME  --subnet $AZ_SUBNET_NAME  --accelerated-networking true --public-ip-address $AZ_FACTOTUM_PUBIP --network-security-group $AZ_NSG_NAME
+az network nic create --resource-group $AZ_RESOURCE_GROUP --name $AZ_CI_NIC  --vnet-name $AZ_VNET_NAME  --subnet $AZ_SUBNET_NAME  --accelerated-networking true --public-ip-address $AZ_CI_PUBIP --network-security-group $AZ_NSG_NAME
 
 # Create application insights
 echo "➡️  Creating application insights..."
-az resource create --resource-group $AZ_RESOURCE_GROUP --resource-type "Microsoft.Insights/components" --name $AZ_INSIGHTS_NAME --location southeastasia --properties '{"ApplicationId":"hysds_zy","Application_Type":"other", "Flow_Type":"Bluefield", "Request_Source":"rest"}'
+az resource create --resource-group $AZ_RESOURCE_GROUP --resource-type "Microsoft.Insights/components" --name $AZ_INSIGHTS_NAME --location southeastasia --properties '{"ApplicationId":"$AZ_INSIGHTS_NAME","Application_Type":"other", "Flow_Type":"Bluefield", "Request_Source":"rest"}'
 
 # Create a storage account
 echo "➡️  Creating a storage account..."

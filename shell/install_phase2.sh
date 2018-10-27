@@ -36,7 +36,8 @@ ssh -o StrictHostKeyChecking=no -i "$PRIVATE_KEY_PATH" -T ops@$BASE_IP <<'EOSSH'
 sudo su -
 sed -i 's/enforcing/disabled/g' /etc/selinux/config
 yum install -y epel-release
-screen -d -m bash -c "yum -y update; yum -y install puppet puppet-firewalld nscd ntp wget curl subversion git vim screen cloud-utils-growpart; yum clean all"
+yum -y install puppet puppet-firewalld nscd ntp wget curl subversion git vim screen cloud-utils-growpart
+yum clean all
 EOSSH
 
 echo "➡️  FYI: You may now SSH into the machine using the command ssh -i \"$PRIVATE_KEY_PATH\" ops@$BASE_IP"

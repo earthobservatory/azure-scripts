@@ -45,6 +45,13 @@ export AZ_GRQ_NIC="GRQNIC_Dev"
 export AZ_FACTOTUM_NIC="FactotumNIC_Dev"
 export AZ_CI_NIC="CINIC_Dev"
 
+# Names of the public IPs
+export AZ_MOZART_PUBIP="MozartPubIP_Dev"
+export AZ_METRICS_PUBIP="MetricsPubIP_Dev"
+export AZ_GRQ_PUBIP="GRQPubIP_Dev"
+export AZ_FACTOTUM_PUBIP="FactotumPubIP_Dev"
+export AZ_CI_PUBIP="CIPubIP_Dev"
+
 # Name of the insights
 # export AZ_INSIGHTS_NAME="HySDS_ZY_Insights"
 export AZ_INSIGHTS_NAME="HySDS_Dev_Insights"
