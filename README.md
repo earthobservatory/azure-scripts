@@ -10,6 +10,8 @@ However, these scripts are not perfect and there may be issues encountered durin
 
 ## Terraform Version Usage
 
+**The Terraform version is NOT yet considered operational!**
+
 Download and install Terraform on your machine (preferably a UNIX-like system such as a Mac or a Linux machine) with [this link](https://www.terraform.io/downloads.html).
 
 Edit the `var_values.tfvars` file to suit your configuration.

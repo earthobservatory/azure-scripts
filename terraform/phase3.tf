@@ -186,6 +186,7 @@ resource "null_resource" "vmautoconfig" {
       AZ_RESOURCE_GROUP  = "${var.resource_group}"
       AZ_BASE_VM_NAME    = "${var.base_vm_name}"
       PRIVATE_KEY_PATH   = "${var.ssh_key_dir}"
+      PRIVATE_KEY_NAME   = "${var.ssh_key_name}"
       CI_IP              = "${azurerm_public_ip.ci.fqdn}"
       FACTOTUM_IP        = "${azurerm_public_ip.factotum.fqdn}"
       METRICS_IP         = "${azurerm_public_ip.metrics.fqdn}"
