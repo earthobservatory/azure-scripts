@@ -33,9 +33,8 @@ base_vm_ip                  = "BaseVMIPTerra"
 base_image_name             = "HySDS_BaseImage_CentOS75_Dev_Terra"
 
 # Authentication to the VMs
-ssh_key_name                = "hysds-dev"
-ssh_key_dir                 = "/Developer/EOS Internship/Azure Keys/hysds-dev"
-ssh_key_pub_dir             = "/Developer/EOS Internship/Azure Keys/hysds-dev.pub"
+ssh_key_dir                 = "/Developer/EOS Internship/Azure Keys/hysdsdev"
+ssh_key_pub_dir             = "/Developer/EOS Internship/Azure Keys/hysdsdev.pub"
 
 # VM Parameters
 mozart_instance             = "MozartVMTerra"

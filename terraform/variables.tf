@@ -107,10 +107,6 @@ variable "base_image_name" {
   description = "Name of the base image based on the base VM"
 }
 
-variable "ssh_key_name" {
-  description = "The filename of the master SSH private key without any directory information"
-}
-
 variable "ssh_key_dir" {
   description = "The path to the master SSH private key to use for the HySDS cluster"
 }
