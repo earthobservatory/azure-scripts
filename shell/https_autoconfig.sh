@@ -51,6 +51,7 @@ echo "➡️  Please check if the above output is correct and that the certifica
 # Let the user manually check if the issuance of the certificate was a success
 read -n 1 -s -r -p "Press any key to continue or press Ctrl-C to abort..."
 
+echo
 echo "➡️  Modifying httpd configuration files for the new certificates..."
 
 # Insert certificates into httpd's configuration

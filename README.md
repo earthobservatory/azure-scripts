@@ -10,8 +10,6 @@ However, these scripts are not perfect and there may be issues encountered durin
 
 ## Terraform Version Usage
 
-**The Terraform version is NOT yet considered operational!**
-
 Download and install Terraform on your machine (preferably a UNIX-like system such as a Mac or a Linux machine) with [this link](https://www.terraform.io/downloads.html).
 
 Edit the `var_values.tfvars` file to suit your configuration.
@@ -22,9 +20,15 @@ Run `terraform apply -var-file=var_values.tfvars`, verify that the parameters ar
 
 Once everything is done, run `az ad sp create-for-rbac --sdk-auth` in your command line to create an application and retrieve the parameters necessary for `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET_KEY`, `AZURE_TENANT_ID` and `AZURE_SUBSCRIPTION_ID` when you're configuring the HySDS cluster through `sds configure`.
 
+### Redeploying a failed asset
+
+If at any point, the deployment of an asset is interrupted by, say, connection issues, you can redeploy the failed asset by "tainting" the asset and allowing Terraform to recreate it. For example, if you want to redeploy the Mozart instance, simply issue `terraform taint azurerm_virtual_machine.mozart` and Terraform will destroy and recreate the instance for you. Keep in mind that you will have to set up that instance manually afterwards.
+
 ### Deficiencies of Terraform
 
 Terraform in essence is a cloud architecture orchestration tool; a declarative language, rather than procedural (contrasting with the shell version). This means that it only concerns itself with assets and dependencies, not the state of the asset themselves. Terraform can only spin up VMs, and cannot alter their power states and so on. In the `.tf` files, you may notice `null_resource`s being created. Null resources are resources not tied to an actual cloud resource, but rather to add a bit of procedural logic in an otherwise declarative environment. For example, the deallocation and generalization of the Base VM is done through an external shell script, through a `null_resource`, not through Terraform's own system because Terraform does not handle these tasks.
+
+These null resources are not automatically destroyed, and must be destroyed with the rest of the system when running `terraform destroy -var-file=var_values.tfvars`
 
 ## Shell Version Usage
 
@@ -78,6 +82,13 @@ The `dump_parameters.sh` script automatically dumps configuration parameters for
 Some of the parameters emitted are based on the parameters set by `envvars.sh`, and may not be correct if `envvars.sh` is incorrect.
 
 `sh dump_parameters.sh`
+
+## Post deployment
+
+Further configuration is still required after you run either the Terraform or the shell versions of the deployment scripts. Some of the tasks that you need to do includes:
+
+1. `sds configure` and other `sds` commands to set up the environment constants used by HySDS on Mozart. Refer to the Manual for more instructions
+2. (Optional) Set up real HTTPS certificates instead of using self-signed ones by running `shell/https_autoconfig.sh`. The current script only supports DNS verification through CloudFlare.
 
 ## Good to knows/Caveats
 
