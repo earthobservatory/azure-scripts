@@ -87,8 +87,9 @@ Some of the parameters emitted are based on the parameters set by `envvars.sh`, 
 
 Further configuration is still required after you run either the Terraform or the shell versions of the deployment scripts. Some of the tasks that you need to do includes:
 
-1. `sds configure` and other `sds` commands to set up the environment constants used by HySDS on Mozart. Refer to the Manual for more instructions
-2. (Optional) Set up real HTTPS certificates instead of using self-signed ones by running `shell/https_autoconfig.sh`. The current script only supports DNS verification through CloudFlare.
+1. Set up CI by navigating to `http://[CI_FQDN]:8080` and proceed as admin, and retrieve Jenkin's API key and the current administrative user's username.
+2. `sds configure` and other `sds` commands to set up the environment constants used by HySDS on Mozart, one of which is to add `JENKINS_API_KEY` as retrieved previously. Refer to the Manual for more instructions
+3. (Optional) Set up real HTTPS certificates instead of using self-signed ones by running `shell/https_autoconfig.sh`. The current script only supports DNS verification through CloudFlare.
 
 ## Good to knows/Caveats
 
