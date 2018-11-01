@@ -134,6 +134,20 @@ resource "azurerm_network_security_group" "hysds" {
         destination_port_range = "9200"
         destination_address_prefix = "*"
     }
+
+    security_rule {
+        name        = "FactotumJobListHTTP"
+        description = ""
+        protocol    = "Tcp"
+        access      = "Allow"
+        priority    = "1700"
+        direction   = "Inbound"
+
+        source_address_prefix  = "Internet"
+        source_port_range      = "*"
+        destination_port_range = "8085"
+        destination_address_prefix = "*"
+    }
 }
 
 ###############################################################################
