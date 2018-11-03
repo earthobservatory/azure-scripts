@@ -41,7 +41,7 @@ resource "azurerm_virtual_machine" "factotum" {
   resource_group_name   = "${azurerm_resource_group.hysds.name}"
   network_interface_ids = ["${azurerm_network_interface.factotum.id}"]
 
-  vm_size = "Standard_D4_v3"
+  vm_size = "Standard_D4s_v3"
 
   storage_image_reference {
     id = "${azurerm_image.basevm.id}"
@@ -52,6 +52,7 @@ resource "azurerm_virtual_machine" "factotum" {
     caching       = "ReadWrite"
     create_option = "FromImage"
     disk_size_gb  = "128"
+    managed_disk_type = "Premium_LRS"
   }
 
   delete_os_disk_on_termination = "true"
