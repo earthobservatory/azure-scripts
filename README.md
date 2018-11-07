@@ -1,28 +1,38 @@
-# HySDS/Azure automatic deployment scripts
+# HySDS/Azure scripts
 
-This repository contains two sets of scripts meant to automatically deploy a HySDS cluster to Microsoft Azure, one employing Terraform, a cloud architecture automatic deployment tool, and one employing traditional shell scripts.
+This repository contains scripts meant to automate and ease the deployment and oepration of a HySDS cluster with ARIA, with a focus on deployment in the Microsoft Azure cloud IaaS.
 
-The Terraform version provides a "versionable" way to write Infrastructure as Code (IAC), and provides a quick way to deploy, and to alter the architecture without having to delete the entire resource group (only applies under certain scenarios). The Terraform version is written in a hybrid manner: while most of the infrastructure is described using Terraform's `.tf` files, there are a few scripts that 
+The deployment scripts are written in Terraform's HCL and standard `sh` shell script respectively in `terraform/` and `shell/`, and are meant to be run on the client side. However, these deployment scripts are not perfect and there may be issues encountered during deployment due to issues like bad connectivity and so on. These scripts do not perform any input sanitisation either, so care must be taken during data entry.
+
+## Directories
+
+### `terraform/` - Terraform version of the deployment scripts
+
+The Terraform version provides a "versionable" way to write Infrastructure as Code (IAC), and provides a quick way to deploy, and to alter the architecture without having to delete the entire resource group (only applies under certain scenarios). The Terraform version is written in a hybrid manner: while most of the infrastructure is described using Terraform's `.tf` files, there are a few scripts that are run by Terraform using [null resources](https://www.terraform.io/docs/provisioners/null_resource.html) that makes Terraform more flexible.
+
+### `shell/` - Standard UNIX shell version of the deployment scripts
 
 The shell script version are written in standard `sh` shell and provides a semi-automated way of deploying a HySDS cluster. The rationale for making shell scripts instead of a more powerful tool in an interpreted language like Python is twofold: to reduce code needed and to improve cross-platform compatibility. Occasionally however, Python helpers are written for more advanced functionality such as JSON parsing.
 
-However, these scripts are not perfect and there may be issues encountered during deployment due to issues like bad connectivity and so on. These scripts do not perform any input sanitisation, so care must be taken during data entry.
+### `helpers/` - Helper scripts for the ARIA adaptation
+
+WIP
 
 ## Terraform Version Usage
 
-Download and install Terraform on your machine (preferably a UNIX-like system such as a Mac or a Linux machine) with [this link](https://www.terraform.io/downloads.html).
+1. Download and install Terraform on your machine (preferably a UNIX-like system such as a Mac or a Linux machine) with [this link](https://www.terraform.io/downloads.html).
 
-Edit the `var_values.tfvars` file to suit your configuration.
+2. Edit the `var_values.tfvars` file to suit your configuration.
 
-Run `terraform init` in order for Terraform to download the appropriate tools for working with Azure.
+3. Run `terraform init` in order for Terraform to download the appropriate tools for working with Azure.
 
-Run `terraform apply -var-file=var_values.tfvars`, verify that the parameters are correct and type `yes` to apply the changes.
+4. Run `terraform apply -var-file=var_values.tfvars`, verify that the parameters are correct and type `yes` to apply the changes.
 
-Once everything is done, run `az ad sp create-for-rbac --sdk-auth` in your command line to create an application and retrieve the parameters necessary for `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET_KEY`, `AZURE_TENANT_ID` and `AZURE_SUBSCRIPTION_ID` when you're configuring the HySDS cluster through `sds configure`.
+5. Once everything is done, run `az ad sp create-for-rbac --sdk-auth` in your command line to create an application and retrieve the parameters necessary for `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET_KEY`, `AZURE_TENANT_ID` and `AZURE_SUBSCRIPTION_ID` when you're configuring the HySDS cluster through `sds configure`.
 
 ### Redeploying a failed asset
 
-If at any point, the deployment of an asset is interrupted by, say, connection issues, you can redeploy the failed asset by "tainting" the asset and allowing Terraform to recreate it. For example, if you want to redeploy the Mozart instance, simply issue `terraform taint azurerm_virtual_machine.mozart` and Terraform will destroy and recreate the instance for you. Keep in mind that you will have to set up that instance manually afterwards.
+If at any point, the deployment of an asset is interrupted by, say, connection issues, you can redeploy the failed asset by "tainting" the asset and allowing Terraform to recreate it. For example, if you want to redeploy the Mozart instance, simply issue the command `terraform taint azurerm_virtual_machine.mozart` and Terraform will destroy and recreate the instance for you. Keep in mind that you will have to set up that instance manually afterwards.
 
 ### Deficiencies of Terraform
 
@@ -46,19 +56,19 @@ This set of scripts make a few assumptions:
 
 Phase 1 provisions networking assets, such as a virtual network, network security groups, IP addresses, network interface cards, and storage containers.
 
-`sh install_phase1.sh`
+Run `$ sh install_phase1.sh`
 
 ### Phase 2 - Base image creation
 
 Phase 2 creates a base image that the actual VMs are going to be based on. You will need to generate an SSH keypair beforehand so that the tool can authenticate to the base VM in order to configure it.
 
-`sh install_phase2.sh`
+Run `$ sh install_phase2.sh`
 
 ### Phase 3 - HySDS VMs deployment
 
 Phase 3 spins up actual VMs used by the HySDS framework, namely, Mozart, Metrics, GRQ, Factotum, and CI. The tool will print the IP addresses of the VMs upon successful deployment.
 
-`sh install_phase3.sh`
+Run `$ sh install_phase3.sh`
 
 ### Phase 4 - HySDS cluster configuration
 
@@ -68,7 +78,7 @@ Keep in mind that Mozart is configured last due to its relative complexity. The 
 
 In addition to spawning a virtual terminal, all `stdout` output is also logged to a `.log` file for debugging purposes.
 
-`sh install_phase4.sh`
+Run `$ sh install_phase4.sh`
 
 ### Dump Parameters - Automatic configuration dumping tool
 
@@ -81,7 +91,7 @@ The `dump_parameters.sh` script automatically dumps configuration parameters for
 
 Some of the parameters emitted are based on the parameters set by `envvars.sh`, and may not be correct if `envvars.sh` is incorrect.
 
-`sh dump_parameters.sh`
+Run `$ sh dump_parameters.sh`
 
 ## Post deployment
 
@@ -89,7 +99,7 @@ Further configuration is still required after you run either the Terraform or th
 
 1. Set up CI by navigating to `http://[CI_FQDN]:8080` and proceed as admin, and retrieve Jenkin's API key and the current administrative user's username.
 2. `sds configure` and other `sds` commands to set up the environment constants used by HySDS on Mozart, one of which is to add `JENKINS_API_KEY` as retrieved previously. Refer to the Manual for more instructions
-3. (Optional) Set up real HTTPS certificates instead of using self-signed ones by running `shell/https_autoconfig.sh`. The current script only supports DNS verification through CloudFlare.
+3. (Optional) Set up real HTTPS certificates instead of using self-signed ones by running `shell/https_autoconfig.sh` on the servers that need it (mainly Mozart, GRQ and Metrics). The current script only supports DNS verification through CloudFlare.
 
 ## Good to knows/Caveats
 
@@ -108,17 +118,19 @@ Further configuration is still required after you run either the Terraform or th
 
 This is caused by a faulty version of the `az` tool (namely 2.0.47) installed by Homebrew (if you used Homebrew to install the package). You have to downgrade the tool to 2.0.46 manually with the following commands. This assumes you already have the `az` tool installed.
 
-`brew unlink azure-cli`
+`$ brew unlink azure-cli`
 
-`brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/3894a0d2095f48136ce1af5ebd5ba42dd38f1dac/Formula/azure-cli.rb`
+`$ brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/3894a0d2095f48136ce1af5ebd5ba42dd38f1dac/Formula/azure-cli.rb`
 
 ## Other known issues
 
-### `yum -y update` hangs
+### `yum -y update` hangs during Phase 2
 
-This issue has not been conclusively investigated, but the symptoms of this issue boils down to an issue that occurs during phase 2, during the provisioning of the base VM, in which the `yum -y update` command causes the system to seem unresponsive, as well as causing the system to not respond to any incoming connections, and all SSH attempts will return `ssh_exchange_identification: read: Connection reset by peer`.
+Symptoms: During the provisioning of the base VM in phase 2, a `yum -y update` command causes the base VM to be unresponsive. There may also be a `ssh_exchange_identification: read: Connection reset by peer` message returned if one attempts to SSH into the VM.
 
-It may be possible that the installation is simply taking a long time. However, during certain installation processes, it is found that `yum` has already terminated, but script is still waiting. A temporary workaround has been implemented in the form of skipping the update and simply installing the required packages and their dependencies.
+Reason: The `yum -y update` command is CPU intensive, and for some reason, the deprovisioning commands is run in parallel with the package updater, causing the user to be unable to SSH back into the machine.
+
+Solution: The `yum -y update` command has been moved from phase 2 to phase 4. The deprovisioning commands is explicitly run on another SSH session right after the installation of necessary yum packages.
 
 ## Feedback
 
