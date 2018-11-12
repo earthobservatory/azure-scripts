@@ -92,7 +92,9 @@ variable "storage_dataset_container" {
   default = "dataset"
 }
 
+###############################################################################
 # Base VM and image
+###############################################################################
 
 variable "base_vm_name" {
   description = "Name of the base VM to create a base image from"
@@ -102,10 +104,29 @@ variable "base_vm_ip" {
   description = "Name of the temporary public IP assigned to the base VM"
 }
 
-
 variable "base_image_name" {
   description = "Name of the base image based on the base VM"
 }
+
+###############################################################################
+# Verdi Image Creator and Cluster management
+###############################################################################
+
+variable "verdi_vm_name" {
+  description = "Name of the Verdi Image Creator VM"
+}
+
+variable "verdi_vm_ip" {
+  description = "Name of the temporary public IP assigned to Verdi Image Creator VM"
+}
+
+variable "vmss_group_name" {
+  description = "Name of the VMSS autoscaling group"
+}
+
+###############################################################################
+# SSH Keys
+###############################################################################
 
 variable "ssh_key_dir" {
   description = "The path to the master SSH private key to use for the HySDS cluster"
@@ -116,7 +137,7 @@ variable "ssh_key_pub_dir" {
 }
 
 ###############################################################################
-# VMs                                                                         #
+# Main VMs                                                                    #
 ###############################################################################
 
 variable "mozart_instance" {

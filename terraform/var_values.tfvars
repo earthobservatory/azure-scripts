@@ -32,7 +32,12 @@ base_vm_name                = "BaseImageDevTerra"
 base_vm_ip                  = "BaseVMIPTerra"
 base_image_name             = "HySDS_BaseImage_CentOS75_Dev_Terra"
 
-# Authentication to the VMs
+# Verdi Image Creator VM
+verdi_vm_name               = "VerdiImageCreatorTerra"
+verdi_vm_ip                 = "VerdiVMIPTerra"
+vmss_group_name             = "vmssterra"
+
+# SSH keys for the VMs
 ssh_key_dir                 = "/Developer/EOS Internship/Azure Keys/hysdsdev"
 ssh_key_pub_dir             = "/Developer/EOS Internship/Azure Keys/hysdsdev.pub"
 

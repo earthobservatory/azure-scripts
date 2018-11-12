@@ -198,7 +198,3 @@ resource "null_resource" "vmautoconfig" {
 
   depends_on = ["azurerm_virtual_machine.mozart", "azurerm_virtual_machine.metrics", "azurerm_virtual_machine.grq", "azurerm_virtual_machine.factotum", "azurerm_virtual_machine.ci"]
 }
-
-output "Final notice" {
-  value = "Do not forget to configure a service principal using \"az ad sp create-for-rbac --sdk-auth\", and retrieve the clientId, clientSecret, subscriptionId and tenantId from the output"
-}
