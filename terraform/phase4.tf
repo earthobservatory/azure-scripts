@@ -1,4 +1,4 @@
-# Phase 2: Creation of the Verdi image
+# Phase 2: Creation of the Verdi image creator VM
 
 # Public IP for the Verdi VM
 resource "azurerm_public_ip" "verdi" {
@@ -67,11 +67,27 @@ resource "null_resource" "verdi" {
           PRIVATE_KEY_PATH  = "${var.ssh_key_dir}"
           VERDI_IP          = "${azurerm_public_ip.verdi.fqdn}"
           AZ_RESOURCE_GROUP = "${var.resource_group}"
-          VMSS              = "${var.vmss_group_name}" # PLEASE CHANGE ME!!!!
+          VMSS              = "${var.vmss_group_name}"
       }
   }
 
   depends_on = ["azurerm_virtual_machine.verdi"]
+}
+
+output "Verdi private IP / VERDI_PVT_IP" {
+  value = "${azurerm_network_interface.verdi.ip_configuration.0.private_ip_address}"
+}
+
+output "Verdi public IP / VERDI_PUB_IP" {
+  value = "${azurerm_public_ip.verdi.ip_address}"
+}
+
+output "Verdi FQDN / VERDI_FQDN" {
+  value = "${azurerm_public_ip.verdi.fqdn}"
+}
+
+output "VMSS Group Name" {
+  value = "${var.vmss_group_name}"
 }
 
 output "Z - Final notice 1" {
@@ -94,7 +110,7 @@ output "Z - Final notice 2" {
 
 
 # # Null resource to run a script to configure the VM for imaging, and to deallocate and generalize the image 
-# resource "null_resource" "basevm" {
+# resource "null_resource" "verdi" {
 #   provisioner "local-exec" {
 #     command = "sh generalize_base_image.sh"
 #     environment {
