@@ -16,7 +16,11 @@ The shell script version are written in standard `sh` shell and provides a semi-
 
 ### `helpers/` - Helper scripts for the ARIA adaptation
 
-WIP
+Shell scripts meant to make life easier for the user. Further documentation is provided in another README.md file in this directory.
+
+### `docs/` - Documentation
+
+Miscellaneous documentation written in Markdown for resolving common problems you may encounter with the system, as well as operational guides.
 
 ## Terraform Version Usage
 
