@@ -80,6 +80,20 @@ resource "azurerm_network_security_group" "hysds" {
     }
 
     security_rule {
+      name          = "GRQAPIAccess"
+      description   = ""
+      protocol      = "Tcp"
+      access        = "Allow"
+      priority      = "1250"
+      direction   = "Inbound"
+
+      source_address_prefix  = "Internet"
+      source_port_range      = "*"
+      destination_port_range = "8878"
+      destination_address_prefix = "*"
+    }
+
+    security_rule {
         name        = "HTTPAltAccess"
         description = ""
         protocol    = "Tcp"
