@@ -55,7 +55,17 @@ resource "azurerm_virtual_machine" "factotum" {
     managed_disk_type = "Premium_LRS"
   }
 
+  storage_data_disk {
+    name          = "${var.factotum_docker_disk}"
+    caching       = "ReadWrite"
+    create_option = "Empty"
+    disk_size_gb  = "64"
+    lun           = "0"
+    managed_disk_type = "Premium_LRS"
+  }
+
   delete_os_disk_on_termination = "true"
+  delete_data_disks_on_termination = "true"
 
   os_profile {
     computer_name  = "${var.factotum_instance}"

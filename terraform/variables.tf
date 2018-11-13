@@ -152,6 +152,10 @@ variable "grq_instance" {
   description = "The name of the GRQ VM"
 }
 
+variable "factotum_docker_disk" {
+  description = "The name of the additional SSD used for Docker images on Factotum"
+}
+
 variable "factotum_instance" {
   description = "The name of the Factotum instance"
 }

@@ -45,5 +45,6 @@ ssh_key_pub_dir             = "/Developer/EOS Internship/Azure Keys/hysdsdev.pub
 mozart_instance             = "MozartVMTerra"
 metrics_instance            = "MetricsVMTerra"
 grq_instance                = "GRQVMTerra"
+factotum_docker_disk        = "FactotumDockerDiskTerra"
 factotum_instance           = "FactotumVMTerra"
 ci_instance                 = "CIVMTerra"
