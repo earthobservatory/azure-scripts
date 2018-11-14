@@ -65,7 +65,7 @@ echo
 
 echo "✏️  Verdi image location:"
 echo "VERDI_PRIMER_IMAGE: "
-echo "azure://$AZ_STORAGE_NAME.blob.core.windows.net/hysds-verdi-latest.tar.gz"
+echo "azure://$AZ_STORAGE_NAME.blob.core.windows.net/code/hysds-verdi-latest.tar.gz"
 echo
 
 echo "✏️  Storage protocol:"

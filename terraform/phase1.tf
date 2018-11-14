@@ -373,5 +373,5 @@ output "Website Endpoint / AZURE_WEBSITE_ENDPOINT and AZURE_ENDPOINT" {
 }
 
 output "Verdi image location / VERDI_PRIMER_IMAGE" {
-  value = "azure://${var.storage_account_name}.blob.core.windows.net/hysds-verdi-latest.tar.gz"
+  value = "azure://${var.storage_account_name}.blob.core.windows.net/${var.storage_code_container}/hysds-verdi-latest.tar.gz"
 }
