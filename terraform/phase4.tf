@@ -30,7 +30,7 @@ resource "azurerm_virtual_machine" "verdi" {
   resource_group_name   = "${azurerm_resource_group.hysds.name}"
   network_interface_ids = ["${azurerm_network_interface.verdi.id}"]
 
-  vm_size               = "Standard_DS1_v2"
+  vm_size               = "Standard_B2s"
   # vm_size = "Standard_B4ms" # This is to increase the speed of installation
 
   storage_image_reference {
@@ -65,21 +65,15 @@ resource "null_resource" "verdi" {
       command = "sh configure_verdi_base.sh"
       environment {
           PRIVATE_KEY_PATH  = "${var.ssh_key_dir}"
+          PRIVATE_KEY_NAME  = "${basename(var.ssh_key_dir)}"
           VERDI_IP          = "${azurerm_public_ip.verdi.fqdn}"
+          MOZART_IP         = "${azurerm_public_ip.mozart.fqdn}"
           AZ_RESOURCE_GROUP = "${var.resource_group}"
           VMSS              = "${var.vmss_group_name}"
       }
   }
 
   depends_on = ["azurerm_virtual_machine.verdi"]
-}
-
-output "Verdi private IP / VERDI_PVT_IP" {
-  value = "${azurerm_network_interface.verdi.ip_configuration.0.private_ip_address}"
-}
-
-output "Verdi public IP / VERDI_PUB_IP" {
-  value = "${azurerm_public_ip.verdi.ip_address}"
 }
 
 output "Verdi FQDN / VERDI_FQDN" {
