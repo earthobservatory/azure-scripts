@@ -235,7 +235,7 @@ resource "azurerm_network_interface" "mozart" {
   ip_configuration {
     name = "${var.nic_mozart}"
     subnet_id = "${azurerm_subnet.hysds.id}"
-    private_ip_address = "10.1.1.5"
+    private_ip_address = "10.1.1.10"
     private_ip_address_allocation = "static"
     public_ip_address_id = "${azurerm_public_ip.mozart.id}"
   }
@@ -254,7 +254,7 @@ resource "azurerm_network_interface" "metrics" {
   ip_configuration {
     name = "${var.nic_metrics}"
     subnet_id = "${azurerm_subnet.hysds.id}"
-    private_ip_address = "10.1.1.6"
+    private_ip_address = "10.1.1.11"
     private_ip_address_allocation = "static"
     public_ip_address_id = "${azurerm_public_ip.metrics.id}"
   }
@@ -272,7 +272,7 @@ resource "azurerm_network_interface" "grq" {
   ip_configuration {
     name = "${var.nic_grq}"
     subnet_id = "${azurerm_subnet.hysds.id}"
-    private_ip_address = "10.1.1.7"
+    private_ip_address = "10.1.1.12"
     private_ip_address_allocation = "static"
     public_ip_address_id = "${azurerm_public_ip.grq.id}"
   }
@@ -291,7 +291,7 @@ resource "azurerm_network_interface" "factotum" {
   ip_configuration {
     name = "${var.nic_factotum}"
     subnet_id = "${azurerm_subnet.hysds.id}"
-    private_ip_address = "10.1.1.8"
+    private_ip_address = "10.1.1.13"
     private_ip_address_allocation = "static"
     public_ip_address_id = "${azurerm_public_ip.factotum.id}"
   }
@@ -310,7 +310,7 @@ resource "azurerm_network_interface" "ci" {
   ip_configuration {
     name = "${var.nic_ci}"
     subnet_id = "${azurerm_subnet.hysds.id}"
-    private_ip_address = "10.1.1.9"
+    private_ip_address = "10.1.1.14"
     private_ip_address_allocation = "static"
     public_ip_address_id = "${azurerm_public_ip.ci.id}"
   }
