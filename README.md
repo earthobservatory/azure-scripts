@@ -1,6 +1,6 @@
 # HySDS/Azure scripts
 
-This repository contains scripts meant to automate and ease the deployment and oepration of a HySDS cluster with ARIA, with a focus on deployment in the Microsoft Azure cloud IaaS.
+This repository contains scripts meant to automate and ease the deployment and operation of a HySDS cluster with ARIA, with a focus on deployment in the Microsoft Azure cloud IaaS.
 
 The deployment scripts are written in Terraform's HCL and standard `sh` shell script respectively in `terraform/` and `shell/`, and are meant to be run on the client side. However, these deployment scripts are not perfect and there may be issues encountered during deployment due to issues like bad connectivity and so on. These scripts do not perform any input sanitisation either, so care must be taken during data entry.
 
@@ -101,9 +101,12 @@ Run `$ sh dump_parameters.sh`
 
 Further configuration is still required after you run either the Terraform or the shell versions of the deployment scripts. Some of the tasks that you need to do includes:
 
-1. Set up CI by navigating to `http://[CI_FQDN]:8080` and proceed as admin, and retrieve Jenkin's API key and the current administrative user's username.
-2. `sds configure` and other `sds` commands to set up the environment constants used by HySDS on Mozart, one of which is to add `JENKINS_API_KEY` as retrieved previously. Refer to the Manual for more instructions
-3. (Optional) Set up real HTTPS certificates instead of using self-signed ones by running `shell/https_autoconfig.sh` on the servers that need it (mainly Mozart, GRQ and Metrics). The current script only supports DNS verification through CloudFlare.
+1. Set up CI by navigating to `http://[CI_FQDN]:8080` and proceed as admin, and retrieve Jenkin's API key and the current administrative user's username. Optionally, you might want to update Jenkins before setting it up by downloading the latest Jenkins `.war` file and replacing the old version in `/usr/local/bin/jenkins.war`.
+2. `sds configure` to set up the environment constants used by HySDS on Mozart, one of which is to add `JENKINS_API_KEY` as retrieved previously.
+3. Verify that ElasticSearch is running on Mozart, Metrics and GRQ instances by running `$ systemctl status elasticsearch` on those instances. If it's not up, run `# systemctl start elasticsearch`.
+4. `sds update all -f` to update all components of HySDS.
+5. `sds start all -f` to start all components of HySDS, and use `sds status all` to verify that all components are up and running.
+6. (Optional) Set up real HTTPS certificates instead of using self-signed ones by running `shell/https_autoconfig.sh` on the servers that need it (mainly Mozart, GRQ and Metrics). The current script only supports DNS verification through CloudFlare.
 
 ## Good to knows/Caveats
 
