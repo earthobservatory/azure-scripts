@@ -15,18 +15,18 @@ These instructions are mainly compiled from `https://docs.docker.com/v1.13/engin
 7. Convert the pool into a thin pool with `# lvconvert -y --zero n -c 512K --thinpool docker/thinpool --poolmetadata docker/thinpoolmeta`
 8. Configure the auto-extension of thin pools with
 
-        tee /etc/lvm/profile/docker-thinpool.profile <<EOF
-        activation {
-        thin_pool_autoextend_threshold=80
-        thin_pool_autoextend_percent=20
-        }
-        EOF
+    tee /etc/lvm/profile/docker-thinpool.profile <<EOF
+    activation {
+    thin_pool_autoextend_threshold=80
+    thin_pool_autoextend_percent=20
+    }
+    EOF
 
 9. Apply the changes with `# lvchange --metadataprofile docker-thinpool docker/thinpool`
 10. Backup your old Docker configurations and images with `mkdir /var/lib/docker.bk; mv /var/lib/docker/* /var/lib/docker.bk`
 11. Modify `/etc/sysconfig/docker-storage`'s `DOCKER_STORAGE_OPTIONS` parameter to `--storage-driver=devicemapper --storage-opt=dm.thinpooldev=/dev/mapper/docker-thinpool --storage-opt=dm.use_deferred_removal=true --storage-opt=dm.use_deferred_deletion=true`
 12. Modify `/etc/sysconfig/docker-storage-setup` to use `devicemapper` instead of `overlay`
-13. Reload `systemctl` with `# systemctl daemon-reload`
+13. Reload `systemctl` with `# systemctl daemon-reload`, and start docker with `# systemctl start docker`, and finally start Factotum from Mozart with `sds start factotum -f`
 14. If all works well, you may want to delete the old version of your Docker images and configurations with `# rm -rf /var/lib/docker.bk`
 
 To inspect the partitions thin pool, simply run `# lsblk`, and to query for the amount of storage used by Docker, simply use `$ docker info`
