@@ -52,7 +52,7 @@ resource "azurerm_virtual_machine" "factotum" {
     caching       = "ReadWrite"
     create_option = "FromImage"
     disk_size_gb  = "128"
-    managed_disk_type = "StandardSSD_LRS"
+    managed_disk_type = "Premium_LRS"
   }
 
   storage_data_disk {
