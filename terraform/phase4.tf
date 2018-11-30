@@ -1,4 +1,4 @@
-# Phase 2: Creation of the Verdi image creator VM
+# Phase 4: Creation of the Verdi image creator VM
 
 # Public IP for the Verdi VM
 resource "azurerm_public_ip" "verdi" {
