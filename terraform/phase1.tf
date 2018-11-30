@@ -85,7 +85,7 @@ resource "azurerm_network_security_group" "hysds" {
       protocol      = "Tcp"
       access        = "Allow"
       priority      = "1250"
-      direction   = "Inbound"
+      direction     = "Inbound"
 
       source_address_prefix  = "Internet"
       source_port_range      = "*"
@@ -139,7 +139,7 @@ resource "azurerm_network_security_group" "hysds" {
         name        = "ElasticSearchAccess"
         description = ""
         protocol    = "Tcp"
-        access      = "Allow"
+        access      = "Deny"
         priority    = "1600"
         direction   = "Inbound"
 
