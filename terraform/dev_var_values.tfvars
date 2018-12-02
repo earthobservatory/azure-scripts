@@ -35,6 +35,7 @@ base_image_name             = "HySDS_BaseImage_CentOS75_Dev_Terra"
 # Verdi Image Creator VM
 verdi_vm_name               = "VerdiImageCreatorTerra"
 verdi_vm_ip                 = "VerdiVMIPTerra"
+vmss_instance_type          = "Standard_F4s_v2"
 vmss_group_name             = "vmssdevterra"
 
 # SSH keys for the VMs
@@ -43,8 +44,13 @@ ssh_key_pub_dir             = "/Developer/EOS Internship/Azure Keys/hysdsdev.pub
 
 # VM Parameters
 mozart_instance             = "MozartVMTerra"
+mozart_instance_type        = "Standard_E4_v3"
 metrics_instance            = "MetricsVMTerra"
+metrics_instance_type       = "Standard_E4_v3"
 grq_instance                = "GRQVMTerra"
-factotum_docker_disk        = "FactotumDockerDiskTerra"
+grq_instance_type           = "Standard_E4_v3"
 factotum_instance           = "FactotumVMTerra"
+factotum_instance_type      = "Standard_D4s_v3"
+factotum_docker_disk        = "FactotumDockerDiskTerra"
 ci_instance                 = "CIVMTerra"
+ci_instance_type            = "Standard_D4_v3"

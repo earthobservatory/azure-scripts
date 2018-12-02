@@ -120,6 +120,10 @@ variable "verdi_vm_ip" {
   description = "Name of the temporary public IP assigned to Verdi Image Creator VM"
 }
 
+variable "vmss_instance_type" {
+  description = "The instance SKU of the Verdi instances in the autoscale cluster"
+}
+
 variable "vmss_group_name" {
   description = "Name of the VMSS autoscaling group"
 }
@@ -144,22 +148,42 @@ variable "mozart_instance" {
   description = "The name of the Mozart VM"
 }
 
+variable "mozart_instance_type" {
+  description = "The instance SKU of the Mozart VM"
+}
+
 variable "metrics_instance" {
   description = "The name of the Metrics VM"
+}
+
+variable "metrics_instance_type" {
+  description = "The instance SKU of the Metrics VM"
 }
 
 variable "grq_instance" {
   description = "The name of the GRQ VM"
 }
 
-variable "factotum_docker_disk" {
-  description = "The name of the additional SSD used for Docker images on Factotum"
+variable "grq_instance_type" {
+  description = "The instance SKU of the GRQ VM"
 }
 
 variable "factotum_instance" {
   description = "The name of the Factotum instance"
 }
 
+variable "factotum_docker_disk" {
+  description = "The name of the additional SSD used for Docker images on Factotum"
+}
+
+variable "factotum_instance_type" {
+  description = "The instance SKU of the Factotum VM"
+}
+
 variable "ci_instance" {
   description = "The name of the CI instance"
+}
+
+variable "ci_instance_type" {
+  description = "The instance SKU of the CI VM"
 }
