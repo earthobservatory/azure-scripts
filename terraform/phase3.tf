@@ -6,7 +6,7 @@ resource "azurerm_virtual_machine" "ci" {
   resource_group_name   = "${azurerm_resource_group.hysds.name}"
   network_interface_ids = ["${azurerm_network_interface.ci.id}"]
 
-  vm_size = "Standard_D4_v3"
+  vm_size = "${var.ci_instance_type}"
 
   storage_image_reference {
     id = "${azurerm_image.basevm.id}"
@@ -41,7 +41,7 @@ resource "azurerm_virtual_machine" "factotum" {
   resource_group_name   = "${azurerm_resource_group.hysds.name}"
   network_interface_ids = ["${azurerm_network_interface.factotum.id}"]
 
-  vm_size = "Standard_D4s_v3"
+  vm_size = "${var.factotum_instance_type}"
 
   storage_image_reference {
     id = "${azurerm_image.basevm.id}"
@@ -51,7 +51,7 @@ resource "azurerm_virtual_machine" "factotum" {
     name          = "${var.factotum_instance}_Disk"
     caching       = "ReadWrite"
     create_option = "FromImage"
-    disk_size_gb  = "128"
+    disk_size_gb  = "256"
     managed_disk_type = "Premium_LRS"
   }
 
@@ -88,7 +88,7 @@ resource "azurerm_virtual_machine" "metrics" {
   resource_group_name   = "${azurerm_resource_group.hysds.name}"
   network_interface_ids = ["${azurerm_network_interface.metrics.id}"]
 
-  vm_size = "Standard_E4_v3"
+  vm_size = "${var.metrics_instance_type}"
 
   storage_image_reference {
     id = "${azurerm_image.basevm.id}"
@@ -124,7 +124,7 @@ resource "azurerm_virtual_machine" "grq" {
   resource_group_name   = "${azurerm_resource_group.hysds.name}"
   network_interface_ids = ["${azurerm_network_interface.grq.id}"]
 
-  vm_size = "Standard_E4_v3"
+  vm_size = "${var.grq_instance_type}"
 
   storage_image_reference {
     id = "${azurerm_image.basevm.id}"
@@ -160,7 +160,7 @@ resource "azurerm_virtual_machine" "mozart" {
   resource_group_name   = "${azurerm_resource_group.hysds.name}"
   network_interface_ids = ["${azurerm_network_interface.mozart.id}"]
 
-  vm_size = "Standard_E4_v3"
+  vm_size = "${var.mozart_instance_type}"
 
   storage_image_reference {
     id = "${azurerm_image.basevm.id}"
