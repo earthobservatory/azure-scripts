@@ -18,7 +18,7 @@ This directory contains `.tf` files written in the HashiCorp configuration langu
 
 **NOTE: the shell version is currently deprecated!**
 
-The shell script version are written in standard `sh` shell and provides a semi-automated way of deploying a HySDS cluster. The rationale for making shell scripts instead of a more powerful tool in an interpreted language like Python is twofold: to reduce code needed and to improve cross-platform compatibility. Occasionally however, Python helpers are written for more advanced functionality such as JSON parsing.
+The shell script version is written in standard `sh` shell and provides a semi-automated way of deploying a HySDS cluster. The rationale for making shell scripts instead of a more powerful tool in an interpreted language like Python is twofold: to reduce code needed and to improve cross-platform compatibility. Occasionally, however, Python helpers are written for more advanced functionality such as JSON parsing.
 
 ### `helpers/` - Helper scripts for the ARIA adaptation
 
@@ -36,18 +36,41 @@ Currenty available documentation:
 
 Please refer to the README files inside the directories for detailed usage during the installation
 
-### Post deployment
+### Post deployment - HySDS provisioning
 
 Further configuration is still required after you run either the Terraform or the shell versions of the deployment scripts. Some of the tasks that you need to do includes:
 
 1. Set up CI by navigating to `http://[CI_FQDN]:8080` and proceed as admin, and retrieve Jenkin's API key and the current administrative user's username. Optionally, you might want to update Jenkins before setting it up by downloading the [latest Jenkins `.war` file](http://mirrors.jenkins.io/war-stable/latest/jenkins.war) and replacing the old version in `/usr/local/bin/jenkins.war`.
 2. `sds configure` to set up the environment constants used by HySDS on Mozart, one of which is to add `JENKINS_API_KEY` as retrieved previously.
-3. Verify that ElasticSearch is running on Mozart, Metrics and GRQ instances by running `$ systemctl status elasticsearch` on those instances. If it's not up, run `# systemctl start elasticsearch`.
+3. Verify that ElasticSearch is running on Mozart, Metrics and GRQ instances by running `$ systemctl status elasticsearch` on those instances. If it's not up, run `# systemctl start elasticsearch`. Optionally, you might want to enable ElasticSearch on startup and run `# systemctl enable elasticsearch`.
 4. `sds update all -f` to update all components of HySDS.
 5. `sds start all -f` to start all components of HySDS, and use `sds status all` to verify that all components are up and running.
 6. (Highly recommended) Improve Docker performance on Factotum by using [this guide](docs/fix_slow_docker.md).
 7. (Optional) Set up real HTTPS certificates instead of using self-signed ones by running `sh /home/ops/https_autoconfig.sh` on the servers that need it (mainly Mozart, GRQ and Metrics). The current script only supports DNS verification through CloudFlare.
 8. (Optional) Set up the ARIA adaptation using instructions from [here](https://github.com/hysds/ariamh/wiki/ARIA-Adaptation).
+
+### Post deployment - ARIA adaptation
+
+This section is adapted from [hysds/ariamh](https://github.com/hysds/ariamh/wiki/ARIA-Adaptation).
+
+1. Stop the cluster with `$ sds stop all -f`
+2. Backup your SDS configuration directory `~/.sds` with `$ mv ~/.sds ~/.sds.bak`
+3. Download the custom SDS configuration on Mozart by running `$ cd ~; wget https://bitbucket.org/nvgdevteam/sds-config-aria/downloads/sds-config-aria-azure.tbz2`
+4. Unpack the new template for the ARIA adaptation with `$ tar xvf sds-config-aria-azure.tbz2; mv sds-config-aria-azure ~/.sds`
+5. Restore your original configuration file `$ cp ~/.sds.bak/config ~/.sds/`
+6. Copy the ARIA adaptation repositories to `~/mozart/ops` by running `$ cp -rf ~/.sds/repos/* ~/mozart/ops/`
+7. Update the cluster with `$ sds update all -f`
+8. Push the ARIA adaptation configuration files with `$ fab -f ~/.sds/cluster.py -R factotum,verdi update_aria_packages`
+9. Ship the latest code configuration bundle for autoscaling workers with `$ sds ship`
+10. Either reset or start the cluster with `$ sds reset all -f` or `$ sds start all -f`
+
+### Post deployment - Autoscaling workers
+
+This section is WIP
+
+### Post deployment - Manual orbital data scraping
+
+This section is WIP
 
 ## Good to knows/Caveats
 
@@ -74,9 +97,9 @@ This is caused by a faulty version of the `az` tool (namely 2.0.47) installed by
 
 Symptoms: During the provisioning of the base VM in phase 2, a `yum -y update` command causes the base VM to be unresponsive. There may also be a `ssh_exchange_identification: read: Connection reset by peer` message returned if one attempts to SSH into the VM.
 
-Reason: The `yum -y update` command is CPU intensive, and for some reason, the deprovisioning commands is run in parallel with the package updater, causing the user to be unable to SSH back into the machine.
+Reason: The `yum -y update` command is CPU intensive, and for some reason, the deprovisioning commands are run in parallel with the package updater, causing the user to be unable to SSH back into the machine.
 
-Solution: The `yum -y update` command has been moved from phase 2 to phase 4. The deprovisioning commands is explicitly run on another SSH session right after the installation of necessary yum packages.
+Solution: The `yum -y update` command has been moved from phase 2 to phase 4. The deprovisioning commands are explicitly run on another SSH session right after the installation of necessary yum packages.
 
 ## Contributing
 
