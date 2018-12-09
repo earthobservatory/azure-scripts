@@ -56,7 +56,7 @@ This section is adapted from [hysds/ariamh](https://github.com/hysds/ariamh/wiki
 1. Stop the cluster with `$ sds stop all -f`
 2. Backup your SDS configuration directory `~/.sds` with `$ mv ~/.sds ~/.sds.bak`
 3. Download the custom SDS configuration on Mozart by running `$ cd ~; wget https://bitbucket.org/nvgdevteam/sds-config-aria/downloads/sds-config-aria-azure.tbz2`
-4. Unpack the new template for the ARIA adaptation with `$ tar xvf sds-config-aria-azure.tbz2; mv sds-config-aria-azure ~/.sds`
+4. Unpack the new template for the ARIA adaptation with `$ tar xvf sds-config-aria-azure.tbz2; mv sds-config-aria ~/.sds`
 5. Restore your original configuration file `$ cp ~/.sds.bak/config ~/.sds/`
 6. Copy the ARIA adaptation repositories to `~/mozart/ops` by running `$ cp -rf ~/.sds/repos/* ~/mozart/ops/`
 7. Update the cluster with `$ sds update all -f`
