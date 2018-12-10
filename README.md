@@ -60,7 +60,7 @@ This section is adapted from [hysds/ariamh](https://github.com/hysds/ariamh/wiki
 5. Restore your original configuration file `$ cp ~/.sds.bak/config ~/.sds/`
 6. Copy the ARIA adaptation repositories to `~/mozart/ops` by running `$ cp -rf ~/.sds/repos/* ~/mozart/ops/`
 7. Update the cluster with `$ sds update all -f`
-8. Push the ARIA adaptation configuration files with `$ fab -f ~/.sds/cluster.py -R factotum,verdi update_aria_packages`
+8. Push the ARIA adaptation configuration files with `$ fab -f ~/.sds/cluster.py -R factotum,verdi update_aria_packages`, or alternatively run the `helpers/fab_push_aria_pkgs.sh` script
 9. Ship the latest code configuration bundle for autoscaling workers with `$ sds ship`
 10. Either reset or start the cluster with `$ sds reset all -f` or `$ sds start all -f`
 
@@ -68,9 +68,28 @@ This section is adapted from [hysds/ariamh](https://github.com/hysds/ariamh/wiki
 
 This section is WIP
 
-### Post deployment - Manual orbital data scraping
+### Post deployment - Manual data download and orbital data scraping
 
-This section is WIP
+This section is adapted from [hysds/ariamh](https://github.com/hysds/ariamh/wiki/ARIA-Adaptation).
+
+1. Install all necessary HySDS packages (in `sdspkg.tar` format), keep in mind that these packages are not YET publicly distributed, but are proven to work with Azure. Some of them are modified, such as `ariamh`
+    - `container-hysds-org_lightweight-jobs:release-20180419` - Basic meta-jobs such as retry, revoke, etc.
+    - `container-aria-hysds_qquery:release-20180612` - Performs qquery to check which SLCs to download and automatically runs the sling jobs
+    - `container-hysds-org_create_aoi:release-20180306` - Creates an AOI of the region
+    - `container-aria-hysds_scihub_acquisition_scraper:release-20180604` - Scrapes data from SciHub or ASF
+    - `container-aria-hysds_s1_qc_ingest:release-20180627` - Ingests Sentinel 1 data
+    - `container-hysds-org_spyddder-man:release-20180129` - Data discovery, download and extraction. Contains the sling jobs (basically jobs for downloading SLCs)
+    - `container-aria-hysds_ariamh:release-20180327` - The ARIA master package
+2. Modify job queues to accelerate certain jobs on Factotum with `~/.sds/files/supervisord.conf.factotum`. Recommended parameters are:
+    - `factotum-job_worker-large`: 4
+    - `factotum-job_worker-asf_throttled`: 8
+    - `factotum-job_worker-scihub_throttled`: 4
+    - `factotum-job_worker-apihub_throttled`: 4
+3. Run acquisition scraper manually by running the `helpers/1_scrape_scihub.sh` script. Make sure that the version number constant is correct.
+4. Run `cd ~/.sds/rules; sds rules import user_rules.json` to import rules to automatically extract acquisition data. Keep in mind that the extract occurs on Verdi workers. If you don't want this, go to Tosca, click "User Rules" on the top right corner and change the worker type to something like `factotum-large`
+5. If acquisition scraper is okay and the rules are imported correctly, define an AOI using the Tosca web interface and submit a `qquery` job with `helpers/2_qquery.sh`
+6. After all the slings and extract jobs are completed, you can move on to scraping orbit and calibration files with `helpers/3_scrape_s1_orbit.sh`
+7. You are now ready to create interferograms!
 
 ## Good to knows/Caveats
 
