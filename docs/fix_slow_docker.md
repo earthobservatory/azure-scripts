@@ -15,12 +15,14 @@ These instructions are mainly compiled from `https://docs.docker.com/v1.13/engin
 7. Convert the pool into a thin pool with `# lvconvert -y --zero n -c 512K --thinpool docker/thinpool --poolmetadata docker/thinpoolmeta`
 8. Configure the auto-extension of thin pools with
 
-        tee /etc/lvm/profile/docker-thinpool.profile <<EOF
-        activation {
-        thin_pool_autoextend_threshold=80
-        thin_pool_autoextend_percent=20
-        }
-        EOF
+    ```bash
+    tee /etc/lvm/profile/docker-thinpool.profile <<EOF
+    activation {
+    thin_pool_autoextend_threshold=80
+    thin_pool_autoextend_percent=20
+    }
+    EOF
+    ```
 
 9. Apply the changes with `# lvchange --metadataprofile docker-thinpool docker/thinpool`
 10. Backup your old Docker configurations and images with `mkdir /var/lib/docker.bk; mv /var/lib/docker/* /var/lib/docker.bk`
