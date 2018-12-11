@@ -66,7 +66,55 @@ This section is adapted from [hysds/ariamh](https://github.com/hysds/ariamh/wiki
 
 ### Post deployment - Autoscaling workers
 
-This section is WIP
+#### Part 1
+
+Part one configures the Verdi image creator VM to be ready for imaging
+
+1. A Verdi image creator VM has already been set up for you through Terraform with its Puppet module installed. However, that image still requires additional configuration to be turned into an image
+2. Push Azure configuration files from Mozart to Verdi with the following script, replacing `[SSH_KEY_NAME]` and `[VERDI_IP]` with the correct strings
+
+    ```bash
+    #!/bin/bash
+
+    export PRIVATE_KEY_NAME=[SSH_KEY_NAME]
+    export VERDI_IP=[VERDI_IP]
+
+    scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i "~/.ssh/$PRIVATE_KEY_NAME" ~/.azure/azure_credentials.json ops@$VERDI_IP:~/.azure
+    scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i "~/.ssh/$PRIVATE_KEY_NAME" ~/.azure/config ops@$VERDI_IP:~/.azure
+    ```
+
+3. Change `VERDI_PVT_IP` in Mozart's `~/.sds/config` with the correct private IP for the Verdi image creator VM.
+4. Update Verdi by running `sds update verdi -f` on Mozart
+5. Push ARIA packages to Verdi by running `fab -f ~/.sds/cluster.py -R verdi update_aria_packages` on Mozart
+6. Install Python packages on Verdi by running `source /home/ops/verdi/bin/activate; pip install azure msrest msrestazure ConfigParser` on Verdi
+7. Ship the Verdi configuration with `sds ship` on Mozart
+8. Deprovision the Verdi instance with `sudo waagent -deprovision -force`. This command can only be run ONCE and there is no going back!
+
+#### Part 2
+
+Part 2 creates the image and the scale set. Run these commands on a machine with Azure CLI with an account
+
+1. Deallocate the VM  with `az vm deallocate --resource-group [AZURE_RESOURCE_GROUP] --name [VERDI_VM_NAME]`
+2. Generalize the VM with `az vm generalize --resource-group [AZURE_RESOURCE_GROUP] --name [VERDI_VM_NAME]`
+3. Create the VM image with `az image create --resource-group [AZURE_RESOURCE_GROUP] --name "HySDS_Verdi_YYYY-MM-DD-rcX" --source [VERDI_VM_NAME]`, with the format of the image name being in year, month, day and release candidate number
+4. Create a file called `bundleurl.txt` by performing `echo BUNDLE_URL=azure://[AZURE_STORAGE_ACCOUNT_NAME].blob.core.windows.net/code/aria-ops.tbz2 > bundleurl.txt`, replacing \[AZURE_STORAGE_ACCOUNT_NAME\] with the name of your storage account
+5. Create the scale set with
+
+    ```bash
+    az vmss create --custom-data bundleurl.txt --location southeastasia --name [VMSS_NAME] --vm-sku Standard_F32s_v2 --admin-username ops --instance-count 0 --single-placement-group true --lb-sku standard --priority low --authentication-type ssh --ssh-key-value "[YOUR_SSH_KEY_VALUE]" --vnet-name [AZURE_VNET] --subnet [SUBNET_NAME] --image [VERDI_IMAGE_NAME] --resource-group [AZURE_RESOURCE_GROUP] --public-ip-per-vm --nsg [NSG_NAME] --eviction-policy delete
+    ```
+
+6. Proceed to configure the scaling rules on the Azure Portal
+7. If you ever need to reconfigure an existing scale set with a different image, use the following script:
+
+    ```bash
+    AZ_RESOURCE_GROUP=[AZURE_RESOURCE_GROUP]
+    IMAGE=[VERDI_IMAGE_NAME]
+    VMSS=[VMSS_NAME]
+    SUBSCRIPTION_ID=[AZURE_SUBSCRIPTION_ID]
+
+    az vmss update --resource-group $AZ_RESOURCE_GROUP --name $VMSS --set virtualMachineProfile.storageProfile.imageReference.id=/subscriptions/$SUBSCRIPTION_ID/resourceGroups/$AZ_RESOURCE_GROUP/providers/Microsoft.Compute/images/$IMAGE
+    ```
 
 ### Post deployment - Manual data download and orbital data scraping
 
@@ -85,9 +133,9 @@ This section is adapted from [hysds/ariamh](https://github.com/hysds/ariamh/wiki
     - `factotum-job_worker-asf_throttled`: 8
     - `factotum-job_worker-scihub_throttled`: 4
     - `factotum-job_worker-apihub_throttled`: 4
-3. Run acquisition scraper manually by running the `helpers/1_scrape_scihub.sh` script. Make sure that the version number constant is correct.
-4. Run `cd ~/.sds/rules; sds rules import user_rules.json` to import rules to automatically extract acquisition data. Keep in mind that the extract occurs on Verdi workers. If you don't want this, go to Tosca, click "User Rules" on the top right corner and change the worker type to something like `factotum-large`
-5. If acquisition scraper is okay and the rules are imported correctly, define an AOI using the Tosca web interface and submit a `qquery` job with `helpers/2_qquery.sh`
+3. Run acquisition scraper manually by running the `helpers/1_scrape_scihub.sh` script. Make sure that the version number constant is correct
+4. If acquisition scraper is okay, define an AOI using the Tosca web interface and submit a `qquery` job with `helpers/2_qquery.sh`
+5. Wait for at least one sling job to complete, and run `cd ~/.sds/rules; sds rules import user_rules.json` to import rules to automatically extract acquisition data. Keep in mind that the extract occurs on Verdi workers. If you don't want this, go to Tosca, click "User Rules" on the top right corner and change the worker type to something like `factotum-large`
 6. After all the slings and extract jobs are completed, you can move on to scraping orbit and calibration files with `helpers/3_scrape_s1_orbit.sh`
 7. You are now ready to create interferograms!
 
