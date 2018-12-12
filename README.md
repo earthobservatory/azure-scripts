@@ -60,9 +60,10 @@ This section is adapted from [hysds/ariamh](https://github.com/hysds/ariamh/wiki
 5. Restore your original configuration file `$ cp ~/.sds.bak/config ~/.sds/`
 6. Copy the ARIA adaptation repositories to `~/mozart/ops` by running `$ cp -rf ~/.sds/repos/* ~/mozart/ops/`
 7. Update the cluster with `$ sds update all -f`
-8. Push the ARIA adaptation configuration files with `$ fab -f ~/.sds/cluster.py -R factotum,verdi update_aria_packages`, or alternatively run the `helpers/fab_push_aria_pkgs.sh` script
-9. Ship the latest code configuration bundle for autoscaling workers with `$ sds ship`
-10. Either reset or start the cluster with `$ sds reset all -f` or `$ sds start all -f`
+8. (Optional) Increase the number of workers on Factotum for faster concurrent downloads by modifying `~/.sds/files/supervisord.conf.factotum`
+9. Push the ARIA adaptation configuration files with `$ fab -f ~/.sds/cluster.py -R factotum,verdi update_aria_packages`, or alternatively run the `helpers/fab_push_aria_pkgs.sh` script
+10. Ship the latest code configuration bundle for autoscaling workers with `$ sds ship`
+11. Either reset or start the cluster with `$ sds reset all -f` or `$ sds start all -f`
 
 ### Post deployment - Autoscaling workers
 
