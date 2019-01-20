@@ -30,8 +30,7 @@ resource "azurerm_virtual_machine" "basevm" {
   resource_group_name   = "${azurerm_resource_group.hysds.name}"
   network_interface_ids = ["${azurerm_network_interface.basevm.id}"]
 
-  vm_size               = "Standard_DS1_v2"
-  # vm_size = "Standard_B4ms" # This is to increase the speed of installation
+  vm_size               = "Standard_F2s_v2"
 
   storage_image_reference {
     publisher = "OpenLogic"

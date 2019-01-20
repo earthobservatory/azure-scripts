@@ -83,7 +83,7 @@ resource "azurerm_network_security_group" "hysds" {
       name          = "GRQAPIAccess"
       description   = ""
       protocol      = "Tcp"
-      access        = "Allow"
+      access        = "Deny"
       priority      = "1250"
       direction     = "Inbound"
 
@@ -108,7 +108,7 @@ resource "azurerm_network_security_group" "hysds" {
     }
 
     security_rule {
-        name        = "QueueAccess"
+        name        = "RabbitMQWebAccess"
         description = ""
         protocol    = "Tcp"
         access      = "Allow"
@@ -122,7 +122,7 @@ resource "azurerm_network_security_group" "hysds" {
     }
 
     security_rule {
-        name        = "CeleryAccess"
+        name        = "CeleryWebAccess"
         description = ""
         protocol    = "Tcp"
         access      = "Allow"
@@ -136,7 +136,7 @@ resource "azurerm_network_security_group" "hysds" {
     }
 
     security_rule {
-        name        = "ElasticSearchAccess"
+        name        = "ElasticSearchInterconnect"
         description = ""
         protocol    = "Tcp"
         access      = "Deny"
@@ -150,11 +150,25 @@ resource "azurerm_network_security_group" "hysds" {
     }
 
     security_rule {
-        name        = "FactotumJobListHTTP"
+        name        = "RabbitMQInterconnect"
+        description = ""
+        protocol    = "Tcp"
+        access      = "Deny"
+        priority    = "1700"
+        direction   = "Inbound"
+
+        source_address_prefix  = "Internet"
+        source_port_range      = "*"
+        destination_port_range = "5672"
+        destination_address_prefix = "*"
+    }
+
+    security_rule {
+        name        = "WorkDirectoryWebAccess"
         description = ""
         protocol    = "Tcp"
         access      = "Allow"
-        priority    = "1700"
+        priority    = "1800"
         direction   = "Inbound"
 
         source_address_prefix  = "Internet"
