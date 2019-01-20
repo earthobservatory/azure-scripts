@@ -31,6 +31,7 @@ storage_dataset_container   = "dataset"
 base_vm_name                = "BaseImageDevTerra"
 base_vm_ip                  = "BaseVMIPTerra"
 base_image_name             = "HySDS_BaseImage_CentOS75_Dev_Terra"
+base_vm_type                = "Standard_F2s_v2"
 
 # Verdi Image Creator VM
 verdi_vm_name               = "VerdiImageCreatorTerra"

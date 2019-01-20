@@ -108,6 +108,10 @@ variable "base_image_name" {
   description = "Name of the base image based on the base VM"
 }
 
+variable "base_vm_type" {
+  description = "The instance SKU of VMs that are involved in image creation"
+}
+
 ###############################################################################
 # Verdi Image Creator and Cluster management
 ###############################################################################

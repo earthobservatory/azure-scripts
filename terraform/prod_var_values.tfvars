@@ -31,16 +31,17 @@ storage_dataset_container   = "dataset"
 base_vm_name                = "BaseImageProdTerra"
 base_vm_ip                  = "BaseVMIPProdTerra"
 base_image_name             = "HySDS_BaseImage_CentOS75_Prod_Terra"
+base_vm_type                = "Standard_B2s"
 
 # Verdi Image Creator VM
 verdi_vm_name               = "VerdiImageCreatorProdTerra"
 verdi_vm_ip                 = "VerdiVMIPProdTerra"
-vmss_instance_type          = "Standard_F32s_v2"
+vmss_instance_type          = "Standard_D32s_v3"
 vmss_group_name             = "vmssprodterra"
 
 # SSH keys for the VMs
-ssh_key_dir                 = "/Developer/EOS Internship/Azure Keys/hysdsdev"
-ssh_key_pub_dir             = "/Developer/EOS Internship/Azure Keys/hysdsdev.pub"
+ssh_key_dir                 = "/Developer/EOS Internship/Azure Keys/hysdsprod"
+ssh_key_pub_dir             = "/Developer/EOS Internship/Azure Keys/hysdsprod.pub"
 
 # VM Parameters
 puppet_branch_version       = "azure-beta1"
@@ -51,6 +52,6 @@ metrics_instance_type       = "Standard_E8s_v3"
 grq_instance                = "GRQVMProdTerra"
 grq_instance_type           = "Standard_E16s_v3"
 factotum_instance           = "FactotumVMProdTerra"
-factotum_instance_type      = "Standard_F32s_v2"
+factotum_instance_type      = "Standard_F16s"
 ci_instance                 = "CIVMProdTerra"
-ci_instance_type            = "Standard_F4s_v2"
+ci_instance_type            = "Standard_F4s"
