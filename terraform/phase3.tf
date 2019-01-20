@@ -55,15 +55,6 @@ resource "azurerm_virtual_machine" "factotum" {
     managed_disk_type = "Premium_LRS"
   }
 
-  storage_data_disk {
-    name          = "${var.factotum_docker_disk}"
-    caching       = "ReadWrite"
-    create_option = "Empty"
-    disk_size_gb  = "64"
-    lun           = "0"
-    managed_disk_type = "Premium_LRS"
-  }
-
   delete_os_disk_on_termination = "true"
   delete_data_disks_on_termination = "true"
 
@@ -194,6 +185,7 @@ resource "null_resource" "vmautoconfig" {
   provisioner "local-exec" {
     command = "sh configure_instances.sh"
     environment {
+      PUPPET_BRANCH      = "${var.puppet_branch_version}"
       AZ_RESOURCE_GROUP  = "${var.resource_group}"
       AZ_BASE_VM_NAME    = "${var.base_vm_name}"
       PRIVATE_KEY_PATH   = "${var.ssh_key_dir}"

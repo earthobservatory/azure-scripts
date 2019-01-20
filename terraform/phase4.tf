@@ -23,15 +23,14 @@ resource "azurerm_network_interface" "verdi" {
   }
 }
 
-# Verdi VM
+# Verdi VM (base image creator)
 resource "azurerm_virtual_machine" "verdi" {
   name                  = "${var.verdi_vm_name}"
   location              = "${azurerm_resource_group.hysds.location}"
   resource_group_name   = "${azurerm_resource_group.hysds.name}"
   network_interface_ids = ["${azurerm_network_interface.verdi.id}"]
 
-  vm_size               = "Standard_B2s"
-  # vm_size = "Standard_B4ms" # This is to increase the speed of installation
+  vm_size               = "Standard_F2s_v2"
 
   storage_image_reference {
     id = "${azurerm_image.basevm.id}"
@@ -64,6 +63,7 @@ resource "null_resource" "verdi" {
   provisioner "local-exec" {
       command = "sh configure_verdi_base.sh"
       environment {
+          PUPPET_BRANCH     = "${var.puppet_branch_version}"
           PRIVATE_KEY_PATH  = "${var.ssh_key_dir}"
           PRIVATE_KEY_NAME  = "${basename(var.ssh_key_dir)}"
           VERDI_IP          = "${azurerm_public_ip.verdi.fqdn}"

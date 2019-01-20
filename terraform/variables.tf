@@ -93,7 +93,7 @@ variable "storage_dataset_container" {
 }
 
 ###############################################################################
-# Base VM and image
+# Base VM and image                                                           #
 ###############################################################################
 
 variable "base_vm_name" {
@@ -144,6 +144,10 @@ variable "ssh_key_pub_dir" {
 # Main VMs                                                                    #
 ###############################################################################
 
+variable "puppet_branch_version" {
+  description = "The branch name or version of the Puppet modules deployed on the servers"
+}
+
 variable "mozart_instance" {
   description = "The name of the Mozart VM"
 }
@@ -170,10 +174,6 @@ variable "grq_instance_type" {
 
 variable "factotum_instance" {
   description = "The name of the Factotum instance"
-}
-
-variable "factotum_docker_disk" {
-  description = "The name of the additional SSD used for Docker images on Factotum"
 }
 
 variable "factotum_instance_type" {

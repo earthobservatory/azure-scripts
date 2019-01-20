@@ -8,10 +8,13 @@ trap '
 
 echo "HySDS provisioning script, configuration of Verdi base image"
 
+# In the future, this script should be automatically handled on Mozart's side
+# using the sds update command, after the initial installation
+
 echo "➡️  Configuring Verdi..."
-ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i "$PRIVATE_KEY_PATH" -T ops@$VERDI_IP << EOSSH
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i "$PRIVATE_KEY_PATH" -T ops@"$VERDI_IP" << EOSSH
 sudo su -
-curl -kL https://github.com/d3lta-v/puppet-autoscale/raw/master/install.sh > install_autoscale.sh
+curl -kL https://github.com/earthobservatory/puppet-autoscale/raw/$PUPPET_BRANCH/install.sh > install_autoscale.sh
 
 screen -dmS queue
 screen -S queue -X stuff "yum -y update
@@ -34,13 +37,11 @@ EOSSH
 echo
 
 # echo "➡️  Pushing Mozart Azure credentials to Verdi..."
-# ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i "$PRIVATE_KEY_PATH" -T ops@$MOZART_IP << EOSSH
+# ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i "$PRIVATE_KEY_PATH" -T ops@"$MOZART_IP" << EOSSH
 # scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i "~/.ssh/$PRIVATE_KEY_NAME" ~/.azure/azure_credentials.json ops@$VERDI_IP:~/.azure
 # scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i "~/.ssh/$PRIVATE_KEY_NAME" ~/.azure/config ops@$VERDI_IP:~/.azure
 # EOSSH
 # echo
-
-# Might want to add commands to push credentials from Mozart to Verdi
 
 echo "➡️  Verdi image creator FQDN is: $VERDI_IP"
 
