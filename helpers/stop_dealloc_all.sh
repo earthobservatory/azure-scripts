@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Stops and deallocates all instances through the Azure CLI
+
+RESOURCE_GROUP="HySDS_Prod_Terra"
+
+MOZART="MozartVMProdTerra"
+METRICS="MetricsVMProdTerra"
+GRQ="GRQVMProdTerra"
+FACTOTUM="FactotumVMProdTerra"
+CI="CIVMProdTerra"
+
+az vm deallocate -g "$RESOURCE_GROUP" -n "$MOZART" --no-wait
+az vm deallocate -g "$RESOURCE_GROUP" -n "$METRICS" --no-wait
+az vm deallocate -g "$RESOURCE_GROUP" -n "$GRQ" --no-wait
+az vm deallocate -g "$RESOURCE_GROUP" -n "$FACTOTUM" --no-wait
+az vm deallocate -g "$RESOURCE_GROUP" -n "$CI" --no-wait
