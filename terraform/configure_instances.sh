@@ -13,7 +13,7 @@ ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i "$PRIVATE_KEY
 sudo su -
 growpart /dev/sda 2
 xfs_growfs -d /dev/sda2
-curl -kL https://github.com/earthobservatory/puppet-cont_int/raw/$PUPPET_BRANCH/install.sh > install_ci.sh
+curl -kL https://github.com/hysds/puppet-cont_int/raw/master/install.sh > install_ci.sh
 screen -d -m bash -c "yum -y update; bash install_ci.sh 2>&1 | tee install_ci.log"
 EOSSH
 echo
