@@ -6,6 +6,7 @@
 # Define the parameters of your Azure system here
 AZ_RESOURCE_GROUP="HySDS_Prod_Terra"            # Name of the resource group
 BASE_VM_NAME="VerdiImageCreatorProdTerra"       # Name of the base VM used to create the image
+STORAGE_ACCOUNT_NAME="hysdsprodterra"           # Name of the storage account
 VMSS_NAME="vmssprodterra"                       # Desired name of the scale set
 VMSS_SKU="Standard_D32s_v3"                     # Desired machine type
 AZURE_VNET="HySDS_VNet_Prod_Terra"              # The vnet of your cluster
@@ -39,7 +40,7 @@ if [ "$OPTION" = "c" ]; then
   az vm generalize --resource-group "$AZ_RESOURCE_GROUP" --name "$BASE_VM_NAME"
   az image create --resource-group "$AZ_RESOURCE_GROUP" --name "$VERDI_IMAGE_NAME" --source "$BASE_VM_NAME"
   # Create the VMSS
-  echo BUNDLE_URL=azure://hysdsprodterra.blob.core.windows.net/code/aria-ops.tbz2 > bundleurl.txt
+  echo BUNDLE_URL=azure://$STORAGE_ACCOUNT_NAME.blob.core.windows.net/code/aria-ops.tbz2 > bundleurl.txt
   az vmss create --custom-data bundleurl.txt --location southeastasia --name "$VMSS_NAME" --vm-sku "$VMSS_SKU" --admin-username ops --instance-count 0 --single-placement-group true --lb-sku standard --priority low --authentication-type ssh --ssh-key-value "$SSH_PUBKEY_VAL" --vnet-name "$AZURE_VNET" --subnet "$SUBNET_NAME" --image "$VERDI_IMAGE_NAME" --resource-group "$AZ_RESOURCE_GROUP" --public-ip-per-vm --nsg "$NSG_NAME" --eviction-policy delete
   rm -f bundleurl.txt
   echo "✅  Creation complete!"
