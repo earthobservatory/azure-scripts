@@ -12,3 +12,5 @@ export QQUERY_RELEASE_NUMBER=release-20180612 # This release number should be th
 export SPYYYDERMAN_RELEASE_NUMBER=release-20180129 # This release number should be the same as the spyyyderman SDS package
 
 ssh -i $KEY_FILENAME ops@${FACTOTUM_PVT_IP} "source ~/verdi/bin/activate; ~/verdi/ops/qquery/qquery/cron.py --tag=$QQUERY_RELEASE_NUMBER --sling_tag=$SPYYYDERMAN_RELEASE_NUMBER asf"
+# Comment the line above and uncomment the line below to qquery from scihub (ESA's official source) instead of asf (Alaskan Satellite Facility mirror)
+#ssh -i $KEY_FILENAME ops@${FACTOTUM_PVT_IP} "source ~/verdi/bin/activate; ~/verdi/ops/qquery/qquery/cron.py --tag=$QQUERY_RELEASE_NUMBER --sling_tag=$SPYYYDERMAN_RELEASE_NUMBER scihub"
