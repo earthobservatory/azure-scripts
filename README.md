@@ -129,11 +129,13 @@ This section is adapted from [hysds/ariamh](https://github.com/hysds/ariamh/wiki
     - `container-aria-hysds_s1_qc_ingest:release-20180627` - Ingests Sentinel 1 data
     - `container-hysds-org_spyddder-man:release-20180129` - Data discovery, download and extraction. Contains the sling jobs (basically jobs for downloading SLCs)
     - `container-aria-hysds_ariamh:release-20180327` - The ARIA master package
+    - If you wish to build your own packages:
+        - `sds ci add_job <Github HTTPS link> azure $UID $(id -g)`
+        - `-b <branch>` - To build from a specific branch
+        - `-k` - To clone with Git token specified in `~/.sds/config`
 2. Modify job queues to accelerate certain jobs on Factotum with `~/.sds/files/supervisord.conf.factotum`. Recommended parameters are:
     - `factotum-job_worker-large`: 4
     - `factotum-job_worker-asf_throttled`: 8
-    - `factotum-job_worker-scihub_throttled`: 4
-    - `factotum-job_worker-apihub_throttled`: 4
 3. Run acquisition scraper manually by running the `helpers/1_scrape_scihub.sh` script. Make sure that the version number constant is correct
 4. If acquisition scraper is okay, define an AOI using the Tosca web interface and submit a `qquery` job with `helpers/2_qquery.sh`
 5. Wait for at least one sling job to complete, and run `cd ~/.sds/rules; sds rules import user_rules.json` to import rules to automatically extract acquisition data. Keep in mind that the extract occurs on Verdi workers. If you don't want this, go to Tosca, click "User Rules" on the top right corner and change the worker type to something like `factotum-large`
