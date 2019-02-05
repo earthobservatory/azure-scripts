@@ -8,7 +8,7 @@ AZ_RESOURCE_GROUP="HySDS_Prod_Terra"            # Name of the resource group
 BASE_VM_NAME="VerdiImageCreatorProdTerra"       # Name of the base VM used to create the image
 STORAGE_ACCOUNT_NAME="hysdsprodterra"           # Name of the storage account
 VMSS_NAME="vmssprodterra"                       # Desired name of the scale set
-VMSS_SKU="Standard_D32s_v3"                     # Desired machine type
+VMSS_SKU="Standard_F16s"                        # Desired machine type
 AZURE_VNET="HySDS_VNet_Prod_Terra"              # The vnet of your cluster
 SUBNET_NAME="HySDS_Subnet_Prod_Terra"           # The subnet of your cluster
 NSG_NAME="HySDS_NSG_Prod_Terra"                 # The NSG of your cluster
@@ -21,7 +21,7 @@ SSH_PUBKEY_VAL=$(ssh-keygen -y -f ~/.ssh/id_rsa)
 echo "HySDS Azure-specific tool, 🛠 Create/Update Virtual Machine Scale Set🛠 "
 echo
 
-read -e -p "⌨️  Create or update VMSS (c/u)? " OPTION
+read -r -e -p "⌨️  Create or update VMSS (c/u)? " OPTION
 
 if [ "$OPTION" = "c" ]; then
   echo "Resource Group Name: $AZ_RESOURCE_GROUP"
@@ -41,7 +41,14 @@ if [ "$OPTION" = "c" ]; then
   az image create --resource-group "$AZ_RESOURCE_GROUP" --name "$VERDI_IMAGE_NAME" --source "$BASE_VM_NAME"
   # Create the VMSS
   echo BUNDLE_URL=azure://$STORAGE_ACCOUNT_NAME.blob.core.windows.net/code/aria-ops.tbz2 > bundleurl.txt
-  az vmss create --custom-data bundleurl.txt --location southeastasia --name "$VMSS_NAME" --vm-sku "$VMSS_SKU" --admin-username ops --instance-count 0 --single-placement-group true --lb-sku standard --priority low --authentication-type ssh --ssh-key-value "$SSH_PUBKEY_VAL" --vnet-name "$AZURE_VNET" --subnet "$SUBNET_NAME" --image "$VERDI_IMAGE_NAME" --resource-group "$AZ_RESOURCE_GROUP" --public-ip-per-vm --nsg "$NSG_NAME" --eviction-policy delete
+  az vmss create --custom-data bundleurl.txt --location southeastasia \
+                 --name "$VMSS_NAME" --vm-sku "$VMSS_SKU" --admin-username ops \
+                 --instance-count 0 --single-placement-group true \
+                 --lb-sku standard --priority low \
+                 --data-disk-sizes-gb 128 --data-disk-caching ReadWrite --storage-sku Premium_LRS \
+                 --authentication-type ssh --ssh-key-value "$SSH_PUBKEY_VAL" \
+                 --vnet-name "$AZURE_VNET" --subnet "$SUBNET_NAME" --nsg "$NSG_NAME" \
+                 --image "$VERDI_IMAGE_NAME" --resource-group "$AZ_RESOURCE_GROUP" --public-ip-per-vm --eviction-policy delete
   rm -f bundleurl.txt
   echo "✅  Creation complete!"
 elif [ "$OPTION" = "u" ]; then
