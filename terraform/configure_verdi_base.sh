@@ -23,8 +23,6 @@ screen -S queue -X stuff "sh install_autoscale.sh 2>&1 | tee install_autoscale.l
 "
 screen -S queue -X stuff "sed -i \"s/c.virtual_machine_scale_sets.list('HySDS')/c.virtual_machine_scale_sets.list('$AZ_RESOURCE_GROUP')/g\" /etc/systemd/system/harikiri.d/harikiri.py
 "
-screen -S queue -X stuff "sed -i \"s/as_group = 'vmss'/as_group = '$VMSS'/g\" /etc/systemd/system/harikiri.d/harikiri.py
-"
 screen -S queue -X stuff "sed -i \"s/c.virtual_machine_scale_set_vms.delete('HySDS',as_group,id)/c.virtual_machine_scale_set_vms.delete('$AZ_RESOURCE_GROUP',as_group,id)/g\" /etc/systemd/system/harikiri.d/harikiri.py
 "
 screen -S queue -X stuff "sed -i \"s/instances = c.virtual_machine_scale_set_vms.list('HySDS',as_group)/instances = c.virtual_machine_scale_set_vms.list('$AZ_RESOURCE_GROUP',as_group)/g\" /etc/systemd/system/harikiri.d/harikiri.py
