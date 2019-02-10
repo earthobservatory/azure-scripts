@@ -21,12 +21,6 @@ screen -S queue -X stuff "yum -y update
 "
 screen -S queue -X stuff "sh install_autoscale.sh 2>&1 | tee install_autoscale.log
 "
-screen -S queue -X stuff "sed -i \"s/c.virtual_machine_scale_sets.list('HySDS')/c.virtual_machine_scale_sets.list('$AZ_RESOURCE_GROUP')/g\" /etc/systemd/system/harikiri.d/harikiri.py
-"
-screen -S queue -X stuff "sed -i \"s/c.virtual_machine_scale_set_vms.delete('HySDS',as_group,id)/c.virtual_machine_scale_set_vms.delete('$AZ_RESOURCE_GROUP',as_group,id)/g\" /etc/systemd/system/harikiri.d/harikiri.py
-"
-screen -S queue -X stuff "sed -i \"s/instances = c.virtual_machine_scale_set_vms.list('HySDS',scale_set)/instances = c.virtual_machine_scale_set_vms.list('$AZ_RESOURCE_GROUP',scale_set)/g\" /etc/systemd/system/harikiri.d/harikiri.py
-"
 screen -S queue -X stuff "sed -i '/DefaultEnvironment/c\DefaultEnvironment=\"AZURE_AUTH_LOCATION=/home/ops/.azure/azure_credentials.json\"' /etc/systemd/system.conf
 "
 screen -S queue -X stuff "exit

@@ -3,7 +3,7 @@
 > Scripts to make your life easier when deploying HySDS and ARIA on Microsoft Azure cloud
 
 <p align="center">
-<img src="media/aria-logo-grey.png" width="50%" \>
+<img src="https://user-images.githubusercontent.com/1763181/52530077-0367d400-2d3a-11e9-984e-e936b137279d.png" width="33%" \>
 </p>
 
 This repository complements the official [HySDS](https://github.com/hysds) repos developed by JPL.
