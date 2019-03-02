@@ -6,6 +6,15 @@
 <img src="https://user-images.githubusercontent.com/1763181/52530077-0367d400-2d3a-11e9-984e-e936b137279d.png" width="33%" \>
 </p>
 
+- [ ] ⭕️ HySDS Core
+- [ ] 📥 Installers (e.g. Puppet, Terraform)
+- [ ] 🧩 Cluster Node-specific Packages (e.g. `mozart`, `figaro`)
+- [ ] 🧰 Operational packages (e.g. `hysds-dockerfiles`)
+- [ ] 🛰 PGE
+- [x] 🛠 Helper Scripts
+- [x] 📖 Documentation
+- [ ] ❓ Miscellaneous / Uncategorized
+
 This repository complements the official [HySDS](https://github.com/hysds) repos developed by JPL.
 
 ## Directories
@@ -142,7 +151,7 @@ This section is adapted from [hysds/ariamh](https://github.com/hysds/ariamh/wiki
 6. After all the slings and extract jobs are completed, you can move on to scraping orbit and calibration files with `helpers/3_scrape_s1_orbit.sh`
 7. You are now ready to create interferograms!
 
-## Good to knows/Caveats
+## Tips / Caveats
 
 - Make sure that Azure is properly configured with `Microsoft.Network`, `Microsoft.Compute` and `Microsoft.Storage` resource providers all enabled
 - Triple check the environment variables defined in the `envvars.sh` file before deploying, such as the name of the resource group, the names of the resources to be created etc.
