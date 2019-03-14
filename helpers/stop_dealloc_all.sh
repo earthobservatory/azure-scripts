@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Stops and deallocates all instances through the Azure CLI
+# This script should be run on any machine that has credentials for the Azure CLI
 
 RESOURCE_GROUP="HySDS_Prod_Terra"
 

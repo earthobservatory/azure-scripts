@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# This script allows you to create or update your VMSS 
-# (virtual machine scale set) by defining a few constants 
+# This script allows you to create or update your Azure VMSS
+# (virtual machine scale set) by defining a few constants
+# This functionality should eventually be written into sdscli
 
 # Define the parameters of your Azure system here
 AZ_RESOURCE_GROUP="HySDS_Prod_Terra"            # Name of the resource group
