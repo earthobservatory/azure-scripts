@@ -38,6 +38,10 @@ sudo certbot --apache certonly -d "$FQDN" --register-unsafely-without-email --ag
 echo "➡️  Configuring CloudFlare DNS..."
 
 # Insert the email and API key of the user into the configuration
+if [[ -f "/etc/letsencrypt/cloudflareapi.cfg" ]]; then
+    # If configuration file already exists, delete and recreate it
+    sudo rm /etc/letsencrypt/cloudflareapi.cfg
+fi
 sudo touch /etc/letsencrypt/cloudflareapi.cfg
 echo "dns_cloudflare_email = $CLOUDFLARE_LOGIN" | sudo tee -a /etc/letsencrypt/cloudflareapi.cfg
 echo "dns_cloudflare_api_key = $CLOUDFLARE_API_KEY" | sudo tee -a /etc/letsencrypt/cloudflareapi.cfg
