@@ -6,9 +6,9 @@
 
 echo "🔐 HTTPS Let's Encrypt Autoconfiguration Tool for CentOS/Apache🔐"
 
-read -e -p "Please enter the Fully Qualified Domain Name of this server: " FQDN
-read -e -p "Please enter your CloudFlare login email: " CLOUDFLARE_LOGIN
-read -e -p "Please enter your CloudFlare Global API Key: " CLOUDFLARE_API_KEY
+read -r -e -p "Please enter the Fully Qualified Domain Name of this server: " FQDN
+read -r -e -p "Please enter your CloudFlare login email: " CLOUDFLARE_LOGIN
+read -r -e -p "Please enter your CloudFlare Global API Key: " CLOUDFLARE_API_KEY
 echo
 
 echo "➡️  Reconfiguring HTTPS settings for httpd to enhance security..."
@@ -31,7 +31,7 @@ sudo yum install -y python2-cloudflare python2-certbot-dns-cloudflare
 echo "➡️  Creating basic directories with an intentionally malformed command, ignore warnings below..."
 
 # Issue a certificate. This should only be run once, with subsequent runs done with certbot renew
-sudo certbot --apache certonly -d $FQDN --register-unsafely-without-email --agree-tos -n
+sudo certbot --apache certonly -d "$FQDN" --register-unsafely-without-email --agree-tos -n
 
 # The above should fail, but it will automatically create a bunch of directories which we need
 
@@ -44,7 +44,7 @@ echo "dns_cloudflare_api_key = $CLOUDFLARE_API_KEY" | sudo tee -a /etc/letsencry
 sudo chmod 600 /etc/letsencrypt/cloudflareapi.cfg
 
 # Now let's try registering again
-sudo certbot certonly --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflareapi.cfg -d $FQDN --register-unsafely-without-email --agree-tos -n
+sudo certbot certonly --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflareapi.cfg -d "$FQDN" --register-unsafely-without-email --agree-tos -n
 
 echo "➡️  Please check if the above output is correct and that the certificate was correctly installed"
 
@@ -55,9 +55,14 @@ echo
 echo "➡️  Modifying httpd configuration files for the new certificates..."
 
 # Insert certificates into httpd's configuration
-sudo sed -i "s/SSLCertificateFile \/etc\/pki\/tls\/certs\/localhost.crt/SSLCertificateFile \/etc\/letsencrypt\/live\/$FQDN\/fullchain.pem/g" /etc/httpd/conf.d/ssl.conf
-sudo sed -i "s/SSLCertificateKeyFile \/etc\/pki\/tls\/private\/localhost.key/SSLCertificateKeyFile \/etc\/letsencrypt\/live\/$FQDN\/privkey.pem/g" /etc/httpd/conf.d/ssl.conf
-sudo sed -i "s/#SSLCertificateChainFile \/etc\/pki\/tls\/certs\/server-chain.crt/SSLCertificateChainFile \/etc\/letsencrypt\/live\/$FQDN\/chain.pem/g" /etc/httpd/conf.d/ssl.conf
+sudo sed -i "s|\("^SSLCertificateFile" * *\).*|\1/etc/letsencrypt/live/$FQDN/fullchain.pem|" /etc/httpd/conf.d/ssl.conf
+sudo sed -i "s|\("^SSLCertificateKeyFile" * *\).*|\1/etc/letsencrypt/live/$FQDN/privkey.pem|" /etc/httpd/conf.d/ssl.conf
+sudo sed -i "s|\("^SSLCertificateChainFile" * *\).*|\1/etc/letsencrypt/live/$FQDN/chain.pem|" /etc/httpd/conf.d/ssl.conf
+
+#old version for certificate insertion
+# sudo sed -i "s/SSLCertificateFile \/etc\/pki\/tls\/certs\/localhost.crt/SSLCertificateFile \/etc\/letsencrypt\/live\/$FQDN\/fullchain.pem/g" /etc/httpd/conf.d/ssl.conf
+# sudo sed -i "s/SSLCertificateKeyFile \/etc\/pki\/tls\/private\/localhost.key/SSLCertificateKeyFile \/etc\/letsencrypt\/live\/$FQDN\/privkey.pem/g" /etc/httpd/conf.d/ssl.conf
+# sudo sed -i "s/#SSLCertificateChainFile \/etc\/pki\/tls\/certs\/server-chain.crt/SSLCertificateChainFile \/etc\/letsencrypt\/live\/$FQDN\/chain.pem/g" /etc/httpd/conf.d/ssl.conf
 
 # Restart httpd
 echo "➡️  Restarting httpd..."
@@ -66,10 +71,20 @@ sudo systemctl restart httpd.service
 # Add renewal script
 echo "➡️  Adding automatic renewal cron job..."
 echo
-echo "renew_hook = systemctl reload httpd" | sudo tee -a /etc/letsencrypt/renewal/$FQDN.conf
-sudo crontab -l > cron.tmp
-echo "30 2 * * * certbot renew -n" >> cron.tmp
-sudo crontab cron.tmp
-rm -f cron.tmp
+
+if cat /etc/letsencrypt/renewal/"$FQDN".conf | grep -q "renew_hook = systemctl reload httpd"; then
+    echo "Renew hook in /etc/letsencrypt/renewal/$FQDN.conf already exists, no need to modify file"
+else
+    echo "renew_hook = systemctl reload httpd" | sudo tee -a /etc/letsencrypt/renewal/"$FQDN".conf
+fi
+
+if sudo crontab -l | grep -q "certbot renew"; then
+    echo "Crontab for automatic certificate renewal already exists, no need to modify file"
+else
+    sudo crontab -l > cron.tmp
+    echo "30 2 * * * certbot renew -n" >> cron.tmp
+    sudo crontab cron.tmp
+    rm -f cron.tmp
+fi
 
 echo "✅  HTTPS configuration complete!"
