@@ -43,13 +43,12 @@ if [ "$OPTION" = "c" ]; then
   # Create the VMSS
   echo BUNDLE_URL=azure://$STORAGE_ACCOUNT_NAME.blob.core.windows.net/code/aria-ops.tbz2 > bundleurl.txt
   az vmss create --custom-data bundleurl.txt --location southeastasia \
-                 --name "$VMSS_NAME" --vm-sku "$VMSS_SKU" --admin-username ops \
-                 --instance-count 0 --single-placement-group true \
-                 --lb-sku standard --priority low \
+                 --resource-group "$AZ_RESOURCE_GROUP" --name "$VMSS_NAME" --vm-sku "$VMSS_SKU" \
+                 --admin-username ops --authentication-type ssh --ssh-key-value "$SSH_PUBKEY_VAL" \
+                 --instance-count 0 --single-placement-group true --priority low \
                  --data-disk-sizes-gb 128 --data-disk-caching ReadWrite --storage-sku Premium_LRS \
-                 --authentication-type ssh --ssh-key-value "$SSH_PUBKEY_VAL" \
-                 --vnet-name "$AZURE_VNET" --subnet "$SUBNET_NAME" --nsg "$NSG_NAME" \
-                 --image "$VERDI_IMAGE_NAME" --resource-group "$AZ_RESOURCE_GROUP" --public-ip-per-vm --eviction-policy delete
+                 --vnet-name "$AZURE_VNET" --subnet "$SUBNET_NAME" --nsg "$NSG_NAME" --public-ip-per-vm --lb "" \
+                 --image "$VERDI_IMAGE_NAME" --eviction-policy delete
   rm -f bundleurl.txt
   echo "✅  Creation complete!"
 elif [ "$OPTION" = "u" ]; then
