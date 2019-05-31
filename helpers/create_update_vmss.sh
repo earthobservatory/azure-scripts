@@ -4,16 +4,19 @@
 # (virtual machine scale set) by defining a few constants
 # This functionality should eventually be written into sdscli
 
+QUEUE_NAME="aria-job_worker_small"              # Queue name which determines machine size
+VMSS_SKU="Standard_F8s_v2"                      # Desired machine type
+VM_SIZE="s"                                     # Size of VM, small or large (s/l) which will determine the usage of storage disks
+
 # Define the parameters of your Azure system here
 AZ_RESOURCE_GROUP="HySDS_Prod_Terra"            # Name of the resource group
 BASE_VM_NAME="VerdiImageCreatorProdTerra"       # Name of the base VM used to create the image
 STORAGE_ACCOUNT_NAME="hysdsprodterra"           # Name of the storage account
-VMSS_NAME="vmssprodterra"                       # Desired name of the scale set
-VMSS_SKU="Standard_F16s"                        # Desired machine type
+VMSS_NAME="$QUEUE_NAME"                         # Desired name of the scale set
 AZURE_VNET="HySDS_VNet_Prod_Terra"              # The vnet of your cluster
 SUBNET_NAME="HySDS_Subnet_Prod_Terra"           # The subnet of your cluster
 NSG_NAME="HySDS_NSG_Prod_Terra"                 # The NSG of your cluster
-VERDI_IMAGE_NAME="HySDS_Verdi_2019-01-25-rc1"   # The name for the image
+VERDI_IMAGE_NAME="HySDS_Verdi_2019-02-06-rc3"   # The name for the image
 SUBSCRIPTION_ID="{{ SUBSCRIPTION_ID }}"         # Get this from ~/.azure/azure_credentials.json
 
 # Value of the public key derived from the private key, change id_rsa if necessary
@@ -23,6 +26,8 @@ echo "HySDS Azure-specific tool, 🛠 Create/Update Virtual Machine Scale Set�
 echo
 
 read -r -e -p "⌨️  Create or update VMSS (c/u)? " OPTION
+
+read -r -e -p "⌨️  Do you wish to create the base image from $BASE_VM_NAME (y/n)? " CREATE_BASE
 
 if [ "$OPTION" = "c" ]; then
   echo "Resource Group Name: $AZ_RESOURCE_GROUP"
@@ -37,18 +42,31 @@ if [ "$OPTION" = "c" ]; then
   echo
   read -n 1 -s -r -p "⌨️  Check if the above information is correct and press any key to continue..."
   # Dealloc, generalize, and create an image from the machine
-  az vm deallocate --resource-group "$AZ_RESOURCE_GROUP" --name "$BASE_VM_NAME"
-  az vm generalize --resource-group "$AZ_RESOURCE_GROUP" --name "$BASE_VM_NAME"
-  az image create --resource-group "$AZ_RESOURCE_GROUP" --name "$VERDI_IMAGE_NAME" --source "$BASE_VM_NAME"
+  if [ "$CREATE_BASE" = "y" ]; then
+    az vm deallocate --resource-group "$AZ_RESOURCE_GROUP" --name "$BASE_VM_NAME"
+    az vm generalize --resource-group "$AZ_RESOURCE_GROUP" --name "$BASE_VM_NAME"
+    az image create --resource-group "$AZ_RESOURCE_GROUP" --name "$VERDI_IMAGE_NAME" --source "$BASE_VM_NAME"
+  fi
   # Create the VMSS
-  echo BUNDLE_URL=azure://$STORAGE_ACCOUNT_NAME.blob.core.windows.net/code/aria-ops.tbz2 > bundleurl.txt
-  az vmss create --custom-data bundleurl.txt --location southeastasia \
+  echo BUNDLE_URL=azure://$STORAGE_ACCOUNT_NAME.blob.core.windows.net/code/$QUEUE_NAME-ops.tbz2 > bundleurl.txt
+  if [ "VM_SIZE" = "s" ]; then
+    # A small VM will need a decently sized data disk
+    az vmss create --custom-data bundleurl.txt --location southeastasia \
                  --resource-group "$AZ_RESOURCE_GROUP" --name "$VMSS_NAME" --vm-sku "$VMSS_SKU" \
                  --admin-username ops --authentication-type ssh --ssh-key-value "$SSH_PUBKEY_VAL" \
                  --instance-count 0 --single-placement-group true --priority low \
-                 --data-disk-sizes-gb 128 --data-disk-caching ReadWrite --storage-sku Premium_LRS \
+                 --data-disk-sizes-gb 128 --data-disk-caching ReadWrite --storage-sku StandardSSD_LRS \
                  --vnet-name "$AZURE_VNET" --subnet "$SUBNET_NAME" --nsg "$NSG_NAME" --public-ip-per-vm --lb "" \
                  --image "$VERDI_IMAGE_NAME" --eviction-policy delete
+  elif [ "VM_SIZE" = "l" ]; then
+    # If the VM is big enough, skip data disk generation
+    az vmss create --custom-data bundleurl.txt --location southeastasia \
+                 --resource-group "$AZ_RESOURCE_GROUP" --name "$VMSS_NAME" --vm-sku "$VMSS_SKU" \
+                 --admin-username ops --authentication-type ssh --ssh-key-value "$SSH_PUBKEY_VAL" \
+                 --instance-count 0 --single-placement-group true --priority low --storage-sku StandardSSD_LRS \
+                 --vnet-name "$AZURE_VNET" --subnet "$SUBNET_NAME" --nsg "$NSG_NAME" --public-ip-per-vm --lb "" \
+                 --image "$VERDI_IMAGE_NAME" --eviction-policy delete
+  fi
   rm -f bundleurl.txt
   echo "✅  Creation complete!"
 elif [ "$OPTION" = "u" ]; then
