@@ -49,7 +49,7 @@ if [ "$OPTION" = "c" ]; then
   fi
   # Create the VMSS
   echo BUNDLE_URL=azure://$STORAGE_ACCOUNT_NAME.blob.core.windows.net/code/$QUEUE_NAME-ops.tbz2 > bundleurl.txt
-  if [ "VM_SIZE" = "s" ]; then
+  if [ "$VM_SIZE" = "s" ]; then
     # A small VM will need a decently sized data disk
     az vmss create --custom-data bundleurl.txt --location southeastasia \
                  --resource-group "$AZ_RESOURCE_GROUP" --name "$VMSS_NAME" --vm-sku "$VMSS_SKU" \
@@ -58,7 +58,7 @@ if [ "$OPTION" = "c" ]; then
                  --data-disk-sizes-gb 128 --data-disk-caching ReadWrite --storage-sku StandardSSD_LRS \
                  --vnet-name "$AZURE_VNET" --subnet "$SUBNET_NAME" --nsg "$NSG_NAME" --public-ip-per-vm --lb "" \
                  --image "$VERDI_IMAGE_NAME" --eviction-policy delete
-  elif [ "VM_SIZE" = "l" ]; then
+  elif [ "$VM_SIZE" = "l" ]; then
     # If the VM is big enough, skip data disk generation
     az vmss create --custom-data bundleurl.txt --location southeastasia \
                  --resource-group "$AZ_RESOURCE_GROUP" --name "$VMSS_NAME" --vm-sku "$VMSS_SKU" \
