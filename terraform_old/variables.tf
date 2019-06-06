@@ -96,8 +96,20 @@ variable "storage_dataset_container" {
 # Base VM and image                                                           #
 ###############################################################################
 
+variable "base_vm_name" {
+  description = "Name of the base VM to create a base image from"
+}
+
+variable "base_vm_ip" {
+  description = "Name of the temporary public IP assigned to the base VM"
+}
+
 variable "base_image_name" {
   description = "Name of the base image based on the base VM"
+}
+
+variable "base_vm_type" {
+  description = "The instance SKU of VMs that are involved in image creation"
 }
 
 ###############################################################################
@@ -110,22 +122,6 @@ variable "verdi_vm_name" {
 
 variable "verdi_vm_ip" {
   description = "Name of the temporary public IP assigned to Verdi Image Creator VM"
-}
-
-variable "verdi_image_publisher" {
-  description = "The publisher of the OS image used to create the Verdi base image"
-}
-
-variable "verdi_image_offer" {
-  description = "The offer (i.e. operating system) of the OS image used to create the Verdi base image"
-}
-
-variable "verdi_image_sku" {
-  description = "The SKU of the OS image used to create the Verdi base image, typically the OS version"
-}
-
-variable "verdi_image_version" {
-  description = "The version of the OS image used to create the Verdi base image, typically the OS build"
 }
 
 variable "vmss_instance_type" {

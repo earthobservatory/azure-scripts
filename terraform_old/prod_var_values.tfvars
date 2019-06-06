@@ -27,19 +27,15 @@ storage_account_name        = "hysdsprodterra"
 storage_code_container      = "code"
 storage_dataset_container   = "dataset"
 
-# Base Image
-# NOTE: This image must be manually created and the name must NOT be modified
-# or it may cause Terraform to attempt to recreate the emtore cluster!
+# Base VM
+base_vm_name                = "BaseImageProdTerra"
+base_vm_ip                  = "BaseVMIPProdTerra"
 base_image_name             = "HySDS_BaseImage_CentOS75_Prod_Terra"
+base_vm_type                = "Standard_B2s"
 
 # Verdi Image Creator VM
 verdi_vm_name               = "VerdiImageCreatorProdTerra"
 verdi_vm_ip                 = "VerdiVMIPProdTerra"
-verdi_image_publisher       = "OpenLogic"
-verdi_image_offer           = "CentOS"
-verdi_image_sku             = "7.6"
-verdi_image_version         = "7.6.20190402"
-
 vmss_instance_type          = "Standard_D32s_v3"
 vmss_group_name             = "vmssprodterra"
 

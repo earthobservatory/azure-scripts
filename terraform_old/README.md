@@ -7,6 +7,7 @@ The Terraform scripts provides a "versionable" way to write Infrastructure as Co
 | Filename | Description |
 |----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `phase1.tf` | Terraform file describing all network and storage assets, such as virtual networks, storage accounts and containers, IP address allocation and so on |
+| `phase2.tf` | Terraform file describing the base image VM |
 | `phase3.tf` | Terraform file describing the major static components of HySDS, namely the Mozart, Metrics, GRQ, Factotum, and CI virtual machines |
 | `phase4.tf` | Terraform file describing the Verdi base image creator VM |
 | `generalize_base_image.sh` | A helper shell script that generalizes the base image, called by a `null_resource` in `phase2.tf` to automatically deallocate and generalize the base image without user intervention |
@@ -20,25 +21,21 @@ The Terraform scripts provides a "versionable" way to write Infrastructure as Co
 
 Download and install Terraform on your machine (preferably a UNIX-like system such as a Mac or a Linux machine) with [this link](https://www.terraform.io/downloads.html).
 
-### 2 - Creating the base image manually
+### 2 - Configuration
 
-Edit and run `create_base_vm.sh`. Follow its instructions to semi-automatically create the base VM. The base VM must be created before running Terraform scripts as the `tfvars` configuration files require the name of the image created from the base VM. The reason for creating the base VM separately and manually is to decouple image creation logic from the  cluster creation logic, preventing a case whereby altering the base VM's parameters in some way automatically forces Terraform to attempt to recreate the entire cluster.
+Edit either the `dev_var_values.tfvars` or the `prod_var_values.tfvars` files for development or production respectively to suit your configuration.
 
-### 3 - Configuration
-
-Copy and edit the`prod_var_values.tfvars` file to suit your configuration.
-
-### 4 - Initialising Terraform
+### 3 - Initialising Terraform
 
 Run `terraform init` in order for Terraform to download the appropriate tools for working with Azure.
 
-### 5 - Apply changes
+### 4 - Apply changes
 
-Run `terraform apply -var-file=<your tfvars file>`, verify that the parameters are correct and type `yes` to apply the changes.
+Run `terraform apply -var-file=[dev_var_values.tfvars/prod_var_values.tfvars]`, verify that the parameters are correct and type `yes` to apply the changes.
 
-### 6 - Post deployment
+### 5 - Post deployment
 
-Once everything is done, run `az ad sp create-for-rbac --sdk-auth` in your command line to create an Active Directory application and retrieve the parameters necessary for `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET_KEY`, `AZURE_TENANT_ID` and `AZURE_SUBSCRIPTION_ID` when you're configuring the HySDS cluster through `sds configure`. Keep in mind that running this command will create a service principal with a root-level scope.
+Once everything is done, run `az ad sp create-for-rbac --sdk-auth` in your command line to create an application and retrieve the parameters necessary for `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET_KEY`, `AZURE_TENANT_ID` and `AZURE_SUBSCRIPTION_ID` when you're configuring the HySDS cluster through `sds configure`.
 
 ## Redeploying a failed asset
 
@@ -48,6 +45,6 @@ For example, if you want to redeploy the Mozart instance, simply issue the comma
 
 ## Deficiencies of Terraform
 
-Terraform in essence is a cloud architecture orchestration tool; a declarative language, rather than procedural (contrasting with the shell version). This means that it only concerns itself with assets and dependencies, not the state of the asset themselves. Terraform can only spin up VMs, and cannot alter their power states and so on. In the `.tf` files, you may notice `null_resource`s being created. Null resources are resources not tied to an actual cloud resource, but rather to add a bit of procedural logic in an otherwise declarative environment. For example, the configuration of the Verdi base VM is done through an external shell script through a `null_resource`, not through Terraform's own system because Terraform does not handle these tasks.
+Terraform in essence is a cloud architecture orchestration tool; a declarative language, rather than procedural (contrasting with the shell version). This means that it only concerns itself with assets and dependencies, not the state of the asset themselves. Terraform can only spin up VMs, and cannot alter their power states and so on. In the `.tf` files, you may notice `null_resource`s being created. Null resources are resources not tied to an actual cloud resource, but rather to add a bit of procedural logic in an otherwise declarative environment. For example, the deallocation and generalization of the Base VM is done through an external shell script, through a `null_resource`, not through Terraform's own system because Terraform does not handle these tasks.
 
 These null resources are not automatically destroyed, and must be destroyed with the rest of the system when running `terraform destroy -var-file=var_values.tfvars`

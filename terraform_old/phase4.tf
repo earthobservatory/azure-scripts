@@ -33,10 +33,7 @@ resource "azurerm_virtual_machine" "verdi" {
   vm_size               = "${var.base_vm_type}"
 
   storage_image_reference {
-    publisher = "${var.verdi_image_publisher}"
-    offer     = "${var.verdi_image_offer}"
-    sku       = "${var.verdi_image_sku}"
-    version   = "${var.verdi_image_version}"
+    id = "${azurerm_image.basevm.id}"
   }
 
   storage_os_disk {
@@ -59,23 +56,6 @@ resource "azurerm_virtual_machine" "verdi" {
       key_data = "${file(var.ssh_key_pub_dir)}"
       path     = "/home/ops/.ssh/authorized_keys"
     }
-  }
-
-  provisioner "remote-exec" {
-    connection {
-      host        = "${azurerm_public_ip.basevm.fqdn}"
-      type        = "ssh"
-      user        = "ops"
-      private_key = "${file(var.ssh_key_dir)}"
-    }
-
-    inline = [
-      "sudo sed -i 's/enforcing/disabled/g' /etc/selinux/config",
-      "sudo yum install -y epel-release",
-      # "sudo yum -y update",
-      "sudo yum -y install puppet puppet-firewalld nscd ntp wget curl subversion git vim screen cloud-utils-growpart",
-      "sudo yum clean all",
-    ]
   }
 }
 
@@ -111,3 +91,39 @@ output "Z - Final notice 1" {
 output "Z - Final notice 2" {
   value = "Please refer to the configuration guides in order to continue configuring the Verdi instances and autoscaling. The Verdi image creator VM is configured asynchronously, and may still be in the midst of configuring itself. Terraform only configures up to the Verdi image creator"
 }
+
+# Creation of the Base Image from the VM we just generalized
+# resource "azurerm_image" "verdi" {
+#   name                      = "${var.base_image_name}"
+#   location                  = "${azurerm_resource_group.hysds.location}"
+#   resource_group_name       = "${azurerm_resource_group.hysds.name}"
+#   source_virtual_machine_id = "${azurerm_virtual_machine.verdi.id}"
+
+#   depends_on = ["null_resource.verdi"]
+# }
+
+
+# # Null resource to run a script to configure the VM for imaging, and to deallocate and generalize the image 
+# resource "null_resource" "verdi" {
+#   provisioner "local-exec" {
+#     command = "sh generalize_base_image.sh"
+#     environment {
+#       AZ_RESOURCE_GROUP  = "${var.resource_group}"
+#       AZ_BASE_VM_NAME    = "${var.base_vm_name}"
+#       PRIVATE_KEY_PATH   = "${var.ssh_key_dir}"
+#       FQDN               = "${azurerm_public_ip.basevm.fqdn}"
+#     }
+#   }
+
+#   depends_on = ["azurerm_virtual_machine.basevm"]
+# }
+
+# # Creation of the Base Image from the VM we just generalized
+# resource "azurerm_image" "basevm" {
+#   name                      = "${var.base_image_name}"
+#   location                  = "${azurerm_resource_group.hysds.location}"
+#   resource_group_name       = "${azurerm_resource_group.hysds.name}"
+#   source_virtual_machine_id = "${azurerm_virtual_machine.basevm.id}"
+
+#   depends_on = ["null_resource.basevm"]
+# }

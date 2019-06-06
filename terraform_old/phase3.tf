@@ -1,11 +1,5 @@
 # Creation of HySDS cluster nodes
 
-data "azurerm_image" "base_image" {
-  # NOTE: this assumes that an image with $var.base_image_name exists!
-  name = "${var.base_image_name}"
-  resource_group_name = "${azurerm_resource_group.hysds.name}"
-}
-
 resource "azurerm_virtual_machine" "ci" {
   name                  = "${var.ci_instance}"
   location              = "${azurerm_resource_group.hysds.location}"
@@ -15,7 +9,7 @@ resource "azurerm_virtual_machine" "ci" {
   vm_size = "${var.ci_instance_type}"
 
   storage_image_reference {
-    id = "${azurerm_image.base_image.id}"
+    id = "${azurerm_image.basevm.id}"
   }
 
   storage_os_disk {
@@ -50,7 +44,7 @@ resource "azurerm_virtual_machine" "factotum" {
   vm_size = "${var.factotum_instance_type}"
 
   storage_image_reference {
-    id = "${azurerm_image.base_image.id}"
+    id = "${azurerm_image.basevm.id}"
   }
 
   storage_os_disk {
@@ -88,7 +82,7 @@ resource "azurerm_virtual_machine" "metrics" {
   vm_size = "${var.metrics_instance_type}"
 
   storage_image_reference {
-    id = "${azurerm_image.base_image.id}"
+    id = "${azurerm_image.basevm.id}"
   }
 
   storage_os_disk {
@@ -124,7 +118,7 @@ resource "azurerm_virtual_machine" "grq" {
   vm_size = "${var.grq_instance_type}"
 
   storage_image_reference {
-    id = "${azurerm_image.base_image.id}"
+    id = "${azurerm_image.basevm.id}"
   }
 
   storage_os_disk {
@@ -160,7 +154,7 @@ resource "azurerm_virtual_machine" "mozart" {
   vm_size = "${var.mozart_instance_type}"
 
   storage_image_reference {
-    id = "${azurerm_image.base_image.id}"
+    id = "${azurerm_image.basevm.id}"
   }
 
   storage_os_disk {
@@ -187,9 +181,6 @@ resource "azurerm_virtual_machine" "mozart" {
   }
 }
 
-# This null resource performs automated configuration of all instances with
-# a shell script. The use of remote-exec was avoided as remote-exec proved
-# to be less robust and flexible
 resource "null_resource" "vmautoconfig" {
   provisioner "local-exec" {
     command = "sh configure_instances.sh"

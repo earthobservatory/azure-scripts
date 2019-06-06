@@ -1,6 +1,6 @@
 .DS_Store
-terraform/.terraform*
-terraform/terraform.tfstate
-terraform/terraform.tfstate.backup
-terraform/terraform.tfstate.dev
-terraform/terraform.tfstate.prod
+terraform*/.terraform*
+terraform*/terraform.tfstate
+terraform*/terraform.tfstate.backup
+terraform*/terraform.tfstate.dev
+terraform*/terraform.tfstate.prod
