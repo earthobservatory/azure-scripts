@@ -6,7 +6,7 @@ trap '
   kill -s INT "$$"
 ' INT
 
-echo "HySDS provisioning script, configuration of Verdi base image"
+echo "HySDS provisioning script, initial configuration of Verdi base image"
 
 # In the future, this script should be automatically handled on Mozart's side
 # using the sds update command, after the initial installation
@@ -27,13 +27,6 @@ screen -S queue -X stuff "exit
 "
 EOSSH
 echo
-
-# echo "➡️  Pushing Mozart Azure credentials to Verdi..."
-# ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i "$PRIVATE_KEY_PATH" -T ops@"$MOZART_IP" << EOSSH
-# scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i "~/.ssh/$PRIVATE_KEY_NAME" ~/.azure/azure_credentials.json ops@$VERDI_IP:~/.azure
-# scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i "~/.ssh/$PRIVATE_KEY_NAME" ~/.azure/config ops@$VERDI_IP:~/.azure
-# EOSSH
-# echo
 
 echo "➡️  Verdi image creator FQDN is: $VERDI_IP"
 

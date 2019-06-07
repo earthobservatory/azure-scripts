@@ -15,7 +15,7 @@ resource "azurerm_virtual_machine" "ci" {
   vm_size = "${var.ci_instance_type}"
 
   storage_image_reference {
-    id = "${azurerm_image.base_image.id}"
+    id = "${data.azurerm_image.base_image.id}"
   }
 
   storage_os_disk {
@@ -50,7 +50,7 @@ resource "azurerm_virtual_machine" "factotum" {
   vm_size = "${var.factotum_instance_type}"
 
   storage_image_reference {
-    id = "${azurerm_image.base_image.id}"
+    id = "${data.azurerm_image.base_image.id}"
   }
 
   storage_os_disk {
@@ -88,7 +88,7 @@ resource "azurerm_virtual_machine" "metrics" {
   vm_size = "${var.metrics_instance_type}"
 
   storage_image_reference {
-    id = "${azurerm_image.base_image.id}"
+    id = "${data.azurerm_image.base_image.id}"
   }
 
   storage_os_disk {
@@ -124,7 +124,7 @@ resource "azurerm_virtual_machine" "grq" {
   vm_size = "${var.grq_instance_type}"
 
   storage_image_reference {
-    id = "${azurerm_image.base_image.id}"
+    id = "${data.azurerm_image.base_image.id}"
   }
 
   storage_os_disk {
@@ -160,7 +160,7 @@ resource "azurerm_virtual_machine" "mozart" {
   vm_size = "${var.mozart_instance_type}"
 
   storage_image_reference {
-    id = "${azurerm_image.base_image.id}"
+    id = "${data.azurerm_image.base_image.id}"
   }
 
   storage_os_disk {
@@ -196,7 +196,6 @@ resource "null_resource" "vmautoconfig" {
     environment {
       PUPPET_BRANCH      = "${var.puppet_branch_version}"
       AZ_RESOURCE_GROUP  = "${var.resource_group}"
-      AZ_BASE_VM_NAME    = "${var.base_vm_name}"
       PRIVATE_KEY_PATH   = "${var.ssh_key_dir}"
       PRIVATE_KEY_NAME   = "${basename(var.ssh_key_dir)}"
       CI_IP              = "${azurerm_public_ip.ci.fqdn}"

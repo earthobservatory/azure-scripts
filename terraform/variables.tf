@@ -112,6 +112,10 @@ variable "verdi_vm_ip" {
   description = "Name of the temporary public IP assigned to Verdi Image Creator VM"
 }
 
+variable "verdi_vm_type" {
+  description = "SKU/VM Type of the Verdi VM for creating a Verdi base image. This is DIFFERENT from the VMSS instance type which is the machine type actually used in autoscaling!"
+}
+
 variable "verdi_image_publisher" {
   description = "The publisher of the OS image used to create the Verdi base image"
 }

@@ -30,7 +30,7 @@ resource "azurerm_virtual_machine" "verdi" {
   resource_group_name   = "${azurerm_resource_group.hysds.name}"
   network_interface_ids = ["${azurerm_network_interface.verdi.id}"]
 
-  vm_size               = "${var.base_vm_type}"
+  vm_size               = "${var.verdi_vm_type}"
 
   storage_image_reference {
     publisher = "${var.verdi_image_publisher}"

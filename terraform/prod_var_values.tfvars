@@ -35,6 +35,7 @@ base_image_name             = "HySDS_BaseImage_CentOS75_Prod_Terra"
 # Verdi Image Creator VM
 verdi_vm_name               = "VerdiImageCreatorProdTerra"
 verdi_vm_ip                 = "VerdiVMIPProdTerra"
+verdi_vm_type               = "Standard_B2s"
 verdi_image_publisher       = "OpenLogic"
 verdi_image_offer           = "CentOS"
 verdi_image_sku             = "7.6"
