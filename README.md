@@ -23,6 +23,10 @@ This repository complements the official [HySDS](https://github.com/hysds) repos
 
 This directory contains `.tf` files written in the HashiCorp configuration language (HCL) that describes a HySDS cluster. For more information on how to use it, refer to [the README file in the directory](terraform/README.md)
 
+### `terraform_old/` - Deprecated Terraform version of the deployment scripts
+
+This version of the Terraform deployment scripts are deprecated.
+
 ### `shell/` - Standard UNIX shell version of the deployment scripts
 
 **NOTE: the shell version is currently deprecated!**
@@ -54,8 +58,8 @@ Further configuration is still required after you run either the Terraform or th
 3. Verify that ElasticSearch is running on Mozart, Metrics and GRQ instances by running `$ systemctl status elasticsearch` on those instances. If it's not up, run `# systemctl start elasticsearch`. Optionally, you might want to enable ElasticSearch on startup and run `# systemctl enable elasticsearch`.
 4. `sds update all -f` to update all components of HySDS.
 5. `sds start all -f` to start all components of HySDS, and use `sds status all` to verify that all components are up and running.
-6. (Highly recommended) Improve Docker performance on Factotum by using [this guide](docs/fix_slow_docker.md).
-7. (Optional) Set up real HTTPS certificates instead of using self-signed ones by running `sh /home/ops/https_autoconfig.sh` on the servers that need it (mainly Mozart, GRQ and Metrics). The current script only supports DNS verification through CloudFlare.
+6. (Recommended) Improve Docker performance on Factotum by using [this guide](docs/fix_slow_docker.md).
+7. (Optional) Set up real HTTPS certificates instead of using self-signed ones by running `sh /home/ops/https_autoconfig.sh` on the servers that need it (mainly Mozart, GRQ and Metrics). The current script only supports DNS verification through CloudFlare, meaning that your DNS nameservers must be Cloudflare before attempting to use this script.
 8. (Optional) Set up the ARIA adaptation using instructions from [here](https://github.com/hysds/ariamh/wiki/ARIA-Adaptation).
 
 ### Post deployment - ARIA adaptation
