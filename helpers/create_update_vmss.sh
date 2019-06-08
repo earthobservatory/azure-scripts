@@ -27,8 +27,6 @@ echo
 
 read -r -e -p "⌨️  Create or update VMSS (c/u)? " OPTION
 
-read -r -e -p "⌨️  Do you wish to create the base image from $BASE_VM_NAME (y/n)? " CREATE_BASE
-
 if [ "$OPTION" = "c" ]; then
   echo "Resource Group Name: $AZ_RESOURCE_GROUP"
   echo "Virtual Net Name: $AZURE_VNET"
@@ -41,31 +39,25 @@ if [ "$OPTION" = "c" ]; then
   echo "Desired Scale Set VM type: $VMSS_SKU"
   echo
   read -n 1 -s -r -p "⌨️  Check if the above information is correct and press any key to continue..."
-  # Dealloc, generalize, and create an image from the machine
-  if [ "$CREATE_BASE" = "y" ]; then
-    az vm deallocate --resource-group "$AZ_RESOURCE_GROUP" --name "$BASE_VM_NAME"
-    az vm generalize --resource-group "$AZ_RESOURCE_GROUP" --name "$BASE_VM_NAME"
-    az image create --resource-group "$AZ_RESOURCE_GROUP" --name "$VERDI_IMAGE_NAME" --source "$BASE_VM_NAME"
-  fi
   # Create the VMSS
   echo BUNDLE_URL=azure://$STORAGE_ACCOUNT_NAME.blob.core.windows.net/code/$QUEUE_NAME-ops.tbz2 > bundleurl.txt
   if [ "$VM_SIZE" = "s" ]; then
     # A small VM will need a decently sized data disk
     az vmss create --custom-data bundleurl.txt --location southeastasia \
-                 --resource-group "$AZ_RESOURCE_GROUP" --name "$VMSS_NAME" --vm-sku "$VMSS_SKU" \
-                 --admin-username ops --authentication-type ssh --ssh-key-value "$SSH_PUBKEY_VAL" \
-                 --instance-count 0 --single-placement-group true --priority low \
-                 --data-disk-sizes-gb 128 --data-disk-caching ReadWrite --storage-sku StandardSSD_LRS \
-                 --vnet-name "$AZURE_VNET" --subnet "$SUBNET_NAME" --nsg "$NSG_NAME" --public-ip-per-vm --lb "" \
-                 --image "$VERDI_IMAGE_NAME" --eviction-policy delete
+                   --resource-group "$AZ_RESOURCE_GROUP" --name "$VMSS_NAME" --vm-sku "$VMSS_SKU" \
+                   --admin-username ops --authentication-type ssh --ssh-key-value "$SSH_PUBKEY_VAL" \
+                   --instance-count 0 --single-placement-group true --priority low \
+                   --data-disk-sizes-gb 128 --data-disk-caching ReadWrite --storage-sku StandardSSD_LRS \
+                   --vnet-name "$AZURE_VNET" --subnet "$SUBNET_NAME" --nsg "$NSG_NAME" --public-ip-per-vm --lb "" \
+                   --image "$VERDI_IMAGE_NAME" --eviction-policy delete
   elif [ "$VM_SIZE" = "l" ]; then
     # If the VM is big enough, skip data disk generation
     az vmss create --custom-data bundleurl.txt --location southeastasia \
-                 --resource-group "$AZ_RESOURCE_GROUP" --name "$VMSS_NAME" --vm-sku "$VMSS_SKU" \
-                 --admin-username ops --authentication-type ssh --ssh-key-value "$SSH_PUBKEY_VAL" \
-                 --instance-count 0 --single-placement-group true --priority low --storage-sku StandardSSD_LRS \
-                 --vnet-name "$AZURE_VNET" --subnet "$SUBNET_NAME" --nsg "$NSG_NAME" --public-ip-per-vm --lb "" \
-                 --image "$VERDI_IMAGE_NAME" --eviction-policy delete
+                   --resource-group "$AZ_RESOURCE_GROUP" --name "$VMSS_NAME" --vm-sku "$VMSS_SKU" \
+                   --admin-username ops --authentication-type ssh --ssh-key-value "$SSH_PUBKEY_VAL" \
+                   --instance-count 0 --single-placement-group true --priority low --storage-sku StandardSSD_LRS \
+                   --vnet-name "$AZURE_VNET" --subnet "$SUBNET_NAME" --nsg "$NSG_NAME" --public-ip-per-vm --lb "" \
+                   --image "$VERDI_IMAGE_NAME" --eviction-policy delete
   fi
   rm -f bundleurl.txt
   echo "✅  Creation complete!"
