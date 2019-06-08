@@ -12,6 +12,11 @@ resource "azurerm_virtual_machine" "ci" {
   resource_group_name   = "${azurerm_resource_group.hysds.name}"
   network_interface_ids = ["${azurerm_network_interface.ci.id}"]
 
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = ["storage_image_reference", "os_profile_linux_config"]
+  }
+
   vm_size = "${var.ci_instance_type}"
 
   storage_image_reference {
@@ -46,6 +51,11 @@ resource "azurerm_virtual_machine" "factotum" {
   location              = "${azurerm_resource_group.hysds.location}"
   resource_group_name   = "${azurerm_resource_group.hysds.name}"
   network_interface_ids = ["${azurerm_network_interface.factotum.id}"]
+
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = ["storage_image_reference", "os_profile_linux_config"]
+  }
 
   vm_size = "${var.factotum_instance_type}"
 
@@ -85,6 +95,11 @@ resource "azurerm_virtual_machine" "metrics" {
   resource_group_name   = "${azurerm_resource_group.hysds.name}"
   network_interface_ids = ["${azurerm_network_interface.metrics.id}"]
 
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = ["storage_image_reference", "os_profile_linux_config"]
+  }
+
   vm_size = "${var.metrics_instance_type}"
 
   storage_image_reference {
@@ -121,6 +136,11 @@ resource "azurerm_virtual_machine" "grq" {
   resource_group_name   = "${azurerm_resource_group.hysds.name}"
   network_interface_ids = ["${azurerm_network_interface.grq.id}"]
 
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = ["storage_image_reference", "os_profile_linux_config"]
+  }
+
   vm_size = "${var.grq_instance_type}"
 
   storage_image_reference {
@@ -156,6 +176,11 @@ resource "azurerm_virtual_machine" "mozart" {
   location              = "${azurerm_resource_group.hysds.location}"
   resource_group_name   = "${azurerm_resource_group.hysds.name}"
   network_interface_ids = ["${azurerm_network_interface.mozart.id}"]
+
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = ["storage_image_reference", "os_profile_linux_config"]
+  }
 
   vm_size = "${var.mozart_instance_type}"
 
