@@ -7,12 +7,11 @@ The Terraform scripts provides a "versionable" way to write Infrastructure as Co
 | Filename | Description |
 |----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `phase1.tf` | Terraform file describing all network and storage assets, such as virtual networks, storage accounts and containers, IP address allocation and so on |
-| `phase3.tf` | Terraform file describing the major static components of HySDS, namely the Mozart, Metrics, GRQ, Factotum, and CI virtual machines |
-| `phase4.tf` | Terraform file describing the Verdi base image creator VM |
-| `generalize_base_image.sh` | A helper shell script that generalizes the base image, called by a `null_resource` in `phase2.tf` to automatically deallocate and generalize the base image without user intervention |
-| `configure_instances.sh` | A shell script that asynchronously configures the major components of HySDS. It is called by a `null_resource` in `phase3.tf` |
-| `configure_verdi_base.sh` | A shell script that asynchronously configures the Verdi base image creator VM. It is called by a `null_resource` in `phase4.tf` |
-| `switch_dev_prod.sh` | A small helper shell script that allows the operator to switch between development and production environments if they have more than one `.tfstate` file |
+| `phase2.tf` | Terraform file describing the major static components of HySDS, namely the Mozart, Metrics, GRQ, Factotum, and CI virtual machines |
+| `phase3.tf` | Terraform file describing the Verdi base image creator VM |
+| `create_base_vm.sh` | A helper shell script that creates the base image semi-automatically |
+| `configure_instances.sh` | A shell script that asynchronously configures the major components of HySDS. It is called by a `null_resource` in `phase2.tf` |
+| `configure_verdi_base.sh` | A shell script that asynchronously configures the Verdi base image creator VM. It is called by a `null_resource` in `phase3.tf` |
 
 ## Usage
 
@@ -26,7 +25,7 @@ Edit and run `create_base_vm.sh`. Follow its instructions to semi-automatically 
 
 ### 3 - Configuration
 
-Copy and edit the`prod_var_values.tfvars` file to suit your configuration.
+Copy and edit the`prod_var_values.tmpl.tfvars` file to suit your configuration.
 
 ### 4 - Initialising Terraform
 

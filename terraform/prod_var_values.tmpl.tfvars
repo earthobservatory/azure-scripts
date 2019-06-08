@@ -30,7 +30,7 @@ storage_dataset_container   = "dataset"
 # Base Image
 # NOTE: This image must be manually created and the name must NOT be modified
 # or it may cause Terraform to attempt to recreate the emtore cluster!
-base_image_name             = "HySDS_BaseImage_CentOS75_Prod_Terra"
+base_image_name             = "HySDS_BaseImage_CentOS76_Prod_Terra"
 
 # Verdi Image Creator VM
 verdi_vm_name               = "VerdiImageCreatorProdTerra"
